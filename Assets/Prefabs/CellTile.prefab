@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7476991754902529440}
   - component: {fileID: 5613699558532446274}
+  - component: {fileID: 4589831653307380438}
   m_Layer: 0
   m_Name: CellWall-R
   m_TagString: Untagged
@@ -84,6 +85,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4589831653307380438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4683955186401807253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActive: 0
 --- !u!1 &5158515144284644851
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,10 +199,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3a2747b9cac6d4ea3052da6b6485d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallL: {fileID: 8762449045252334187}
-  wallR: {fileID: 4683955186401807253}
-  wallU: {fileID: 8343782431342192657}
-  wallD: {fileID: 8189868374474161793}
+  wallL: {fileID: 3858663197284278270}
+  wallR: {fileID: 4589831653307380438}
+  wallU: {fileID: 5344595505274833055}
+  wallD: {fileID: 4417468041565832954}
 --- !u!1 &8189868374474161793
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,6 +213,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3716631956472616698}
   - component: {fileID: 4559049063581692117}
+  - component: {fileID: 4417468041565832954}
   m_Layer: 0
   m_Name: CellWall-D
   m_TagString: Untagged
@@ -273,6 +288,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4417468041565832954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8189868374474161793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActive: 0
 --- !u!1 &8343782431342192657
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,6 +311,7 @@ GameObject:
   m_Component:
   - component: {fileID: 914008828322449936}
   - component: {fileID: 1275148878905757167}
+  - component: {fileID: 5344595505274833055}
   m_Layer: 0
   m_Name: CellWall-U
   m_TagString: Untagged
@@ -357,6 +386,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5344595505274833055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8343782431342192657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActive: 0
 --- !u!1 &8762449045252334187
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,6 +409,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8749460646142162622}
   - component: {fileID: 8606176434241879018}
+  - component: {fileID: 3858663197284278270}
   m_Layer: 0
   m_Name: CellWall-L
   m_TagString: Untagged
@@ -441,3 +484,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3858663197284278270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8762449045252334187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsActive: 0

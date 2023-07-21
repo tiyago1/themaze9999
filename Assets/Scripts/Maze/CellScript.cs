@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class CellScript : MonoBehaviour {
-
-    public GameObject wallL;
-    public GameObject wallR;
-    public GameObject wallU;
-    public GameObject wallD;
+public class CellScript : MonoBehaviour
+{
+    public Column wallL;
+    public Column wallR;
+    public Column wallU;
+    public Column wallD;
 }
+

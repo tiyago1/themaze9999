@@ -14,25 +14,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MazeGenerator : MonoBehaviour {
-
+public class MazeGenerator : MonoBehaviour
+{
     #region Variables:
+
     // ------------------------------------------------------
     // User defined variables - set in editor:
     // ------------------------------------------------------
     [Header("Maze generation values:")]
-    [Tooltip("How many cells tall is the maze. MUST be an even number. " +
-        "If number is odd, it will be reduced by 1.\n\n" +
-        "Minimum value of 4.")]
+    [Tooltip("How many cells tall is the maze. MUST be an even number. " + "If number is odd, it will be reduced by 1.\n\n" + "Minimum value of 4.")]
     public int mazeRows;
-    [Tooltip("How many cells wide is the maze. Must be an even number. " +
-        "If number is odd, it will be reduced by 1.\n\n" +
-        "Minimum value of 4.")]
+
+    [Tooltip("How many cells wide is the maze. Must be an even number. " + "If number is odd, it will be reduced by 1.\n\n" + "Minimum value of 4.")]
     public int mazeColumns;
 
-    [Header("Maze object variables:")]
-    [Tooltip("Cell prefab object.")]
-    [SerializeField]
+    [Header("Maze object variables:")] [Tooltip("Cell prefab object.")] [SerializeField]
     private GameObject cellPrefab;
 
     [Tooltip("If you want to disable the main sprite so the cell has no background, set to TRUE. This will create a maze with only walls.")]
@@ -47,8 +43,10 @@ public class MazeGenerator : MonoBehaviour {
 
     // Dictionary to hold and locate all cells in maze.
     private Dictionary<Vector2, Cell> allCells = new Dictionary<Vector2, Cell>();
+
     // List to hold unvisited cells.
     private List<Cell> unvisited = new List<Cell>();
+
     // List to store 'stack' cells, cells being checked during generation.
     private List<Cell> stack = new List<Cell>();
 
@@ -61,12 +59,13 @@ public class MazeGenerator : MonoBehaviour {
     private Cell checkCell;
 
     // Array of all possible neighbour positions.
-    private Vector2[] neighbourPositions = new Vector2[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1) };
+    private Vector2[] neighbourPositions = new Vector2[] {new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1)};
 
     // Size of the cells, used to determine how far apart to place cells during generation.
     private float cellSize;
 
     private GameObject mazeParent;
+
     #endregion
 
     /* This Start run is an example, you can delete this when 
@@ -169,13 +168,14 @@ public class MazeGenerator : MonoBehaviour {
         Cell newCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
         // Remove appropriate wall for chosen edge cell.
-        if (newCell.gridPos.x == 0) RemoveWall(newCell.cScript, 1);
-        else if (newCell.gridPos.x == mazeColumns) RemoveWall(newCell.cScript, 2);
-        else if (newCell.gridPos.y == mazeRows) RemoveWall(newCell.cScript, 3);
-        else RemoveWall(newCell.cScript, 4);
+        if (newCell.gridPos.x == 0) SetGate(newCell.cScript, 1, false);
+        else if (newCell.gridPos.x == mazeColumns) SetGate(newCell.cScript, 2, false);
+        else if (newCell.gridPos.y == mazeRows) SetGate(newCell.cScript, 3, false);
+        else SetGate(newCell.cScript, 4, false);
 
         Debug.Log("Maze generation exit finished." + newCell.gridPos);
     }
+
     public void MakeEnter()
     {
         // Create and populate list of all possible edge cells.
@@ -193,14 +193,14 @@ public class MazeGenerator : MonoBehaviour {
         Cell newCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
         // Remove appropriate wall for chosen edge cell.
-        if (newCell.gridPos.x == 0) RemoveWall(newCell.cScript, 1);
-        else if (newCell.gridPos.x == mazeColumns) RemoveWall(newCell.cScript, 2);
-        else if (newCell.gridPos.y == mazeRows) RemoveWall(newCell.cScript, 3);
-        else RemoveWall(newCell.cScript, 4);
+        if (newCell.gridPos.x == 0) SetGate(newCell.cScript, 1, true);
+        else if (newCell.gridPos.x == mazeColumns) SetGate(newCell.cScript, 2, true);
+        else if (newCell.gridPos.y == mazeRows) SetGate(newCell.cScript, 3, true);
+        else SetGate(newCell.cScript, 4, true);
 
         Debug.Log("Maze generation enter finished. " + newCell.gridPos);
     }
-    
+
     public List<Cell> GetUnvisitedNeighbours(Cell curCell)
     {
         // Create a list to return.
@@ -262,6 +262,20 @@ public class MazeGenerator : MonoBehaviour {
         else if (wallID == 4) cScript.wallD.SetActive(false);
     }
 
+    public void SetGate
+    (
+        CellScript cScript,
+        int wallID,
+        bool isEnter
+    )
+    {
+        Color color = isEnter ? Color.red : Color.green;
+        if (wallID == 1) cScript.wallL.GetComponent<SpriteRenderer>().color = color;
+        else if (wallID == 2) cScript.wallR.GetComponent<SpriteRenderer>().color = color;
+        else if (wallID == 3) cScript.wallU.GetComponent<SpriteRenderer>().color = color;
+        else if (wallID == 4) cScript.wallD.GetComponent<SpriteRenderer>().color = color;
+    }
+
     public void CreateCentre()
     {
         // Get the 4 centre cells using the rows and columns variables.
@@ -283,11 +297,11 @@ public class MazeGenerator : MonoBehaviour {
         // We then use the remaining 3 ints to remove 3 of the centre cells from the 'unvisited' list.
         // This ensures that one of the centre cells will connect to the maze but the other three won't.
         // This way, the centre room will only have 1 entry / exit point.
-        List<int> rndList = new List<int> { 0, 1, 2, 3 };
+        List<int> rndList = new List<int> {0, 1, 2, 3};
         int startCell = rndList[Random.Range(0, rndList.Count)];
         rndList.Remove(startCell);
         currentCell = centreCells[startCell];
-        foreach(int c in rndList)
+        foreach (int c in rndList)
         {
             unvisited.Remove(centreCells[c]);
         }
@@ -351,5 +365,3 @@ public class MazeGenerator : MonoBehaviour {
         public CellScript cScript;
     }
 }
-
-
