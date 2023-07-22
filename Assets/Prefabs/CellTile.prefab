@@ -52,7 +52,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -137,7 +137,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
   IsActive: 0
   Colors:
   - {r: 0, g: 0.17153597, b: 1, a: 1}
-  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 1}
+  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 5613699558532446274}
 --- !u!1 &5158515144284644851
 GameObject:
@@ -245,7 +245,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -301,7 +301,7 @@ MonoBehaviour:
   CellRenderer: {fileID: 3555204325471063148}
   Colors:
   - {r: 1, g: 1, b: 1, a: 0}
-  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 1}
+  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
 --- !u!1 &8189868374474161793
 GameObject:
   m_ObjectHideFlags: 0
@@ -355,7 +355,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -403,7 +403,7 @@ MonoBehaviour:
   IsActive: 0
   Colors:
   - {r: 0, g: 0.17153597, b: 1, a: 1}
-  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 1}
+  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 4559049063581692117}
 --- !u!1 &8343782431342192657
 GameObject:
@@ -458,7 +458,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -506,7 +506,7 @@ MonoBehaviour:
   IsActive: 0
   Colors:
   - {r: 0, g: 0.17153597, b: 1, a: 1}
-  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 1}
+  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 1275148878905757167}
 --- !u!1 &8762449045252334187
 GameObject:
@@ -561,7 +561,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -609,5 +609,5 @@ MonoBehaviour:
   IsActive: 0
   Colors:
   - {r: 0, g: 0.17153597, b: 1, a: 1}
-  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 1}
+  - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 8606176434241879018}

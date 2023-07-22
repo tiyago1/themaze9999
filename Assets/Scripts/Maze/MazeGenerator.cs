@@ -169,16 +169,15 @@ public class MazeGenerator : MonoBehaviour
                 edgeCells.Add(cell.Value);
             }
         }
-
-        // Get edge cell randomly from list.
+        
         Cell newCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
-        if (newCell.gridPos.x == enterCell.gridPos.x || newCell.gridPos.y == enterCell.gridPos.y)
+        // Get edge cell randomly from list.
+        while (newCell.gridPos.x == enterCell.gridPos.x || newCell.gridPos.y == enterCell.gridPos.y)
         {
-            MakeExit();
-            return;
+            newCell = edgeCells[Random.Range(0, edgeCells.Count)];
         }
-        
+
         // Remove appropriate wall for chosen edge cell.
         if (newCell.gridPos.x == 0) SetGate(newCell.cScript, 1, false);
         else if (newCell.gridPos.x == mazeColumns) SetGate(newCell.cScript, 2, false);
