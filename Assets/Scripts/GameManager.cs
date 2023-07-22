@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Maze.UI;
+using UnityEngine;
 using Zenject;
 
 namespace Maze
@@ -8,6 +9,7 @@ namespace Maze
         [Inject] private MazeGenerator _mazeGenerator;
         [Inject] private HealthController _healthController;
         [Inject] private PlayerController _playerController;
+        [Inject] private GameResultPanel _gameResultPanel;
         
         public bool IsGameOver;
 
@@ -37,6 +39,14 @@ namespace Maze
             _healthController.Initialize();
             _playerController.Initialize();
             SetUpCamera(_mazeGenerator.mazeRows);
+        }
+
+        public void CheckGameEnd(MazeGenerator.Cell checkCell)
+        {
+            if (checkCell.gridPos == _mazeGenerator.EndCell.gridPos)
+            {
+                _gameResultPanel.Show(true);
+            }
         }
     }
 }

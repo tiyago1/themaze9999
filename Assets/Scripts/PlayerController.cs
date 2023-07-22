@@ -1,5 +1,6 @@
 ﻿using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Zenject;
 
 namespace Maze
@@ -8,6 +9,8 @@ namespace Maze
     {
         [Inject] private MazeGenerator _maze;
         [Inject] private HealthController _healthController;
+        [Inject] private GameManager _gameManager;
+
         [SerializeField] private Camera _camera;
 
         public MazeGenerator.Cell CurrentCell;
@@ -19,6 +22,8 @@ namespace Maze
 
         public void Initialize()
         {
+            p1.Initialize();
+            p2.Initialize();
             _healthController.Initialize();
 
             CurrentCell = _maze.StartCell;
@@ -75,11 +80,7 @@ namespace Maze
             {
                 var nextCellColumn = nextCell.cScript.GetColumnWithDirection(-direction);
                 nextCellColumn.SetActive(false);
-                currentColumn.ShowWallInteractionEffect(direction,
-                                                        () =>
-                                                        {
-                                                            nextCellColumn.SetActive(true);
-                                                        });
+                currentColumn.ShowWallInteractionEffect(direction, () => { nextCellColumn.SetActive(true); });
 
                 _healthController.TakeDamage();
                 ShakeCamera();
@@ -94,9 +95,25 @@ namespace Maze
         public void SetCell(MazeGenerator.Cell cell)
         {
             CurrentCell = cell;
+            var renderer = this.GetComponent<SpriteRenderer>();
+            var cellSortingGroup = CurrentCell.cScript.GrayArea.GetComponent<SortingGroup>();
+            if (CurrentCell.gridPos == _maze.StartCell.gridPos || CurrentCell.gridPos == _maze.EndCell.gridPos)
+            {
+                cellSortingGroup.sortingLayerID = 1;
+                cellSortingGroup.sortingOrder = -10;
+             
+                renderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            }
+            else
+            {
+                cellSortingGroup.sortingOrder = 5;
+                cellSortingGroup.sortingLayerID = 2;
+                renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+            }
+
             // this.transform.position = CurrentCell.cellObject.transform.position;
 
-            this.transform.DOMove(CurrentCell.cellObject.transform.position, .1f);
+            this.transform.DOMove(CurrentCell.cellObject.transform.position, .1f).OnComplete(() => { _gameManager.CheckGameEnd(CurrentCell); });
         }
     }
 }

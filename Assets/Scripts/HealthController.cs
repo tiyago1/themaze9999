@@ -13,7 +13,7 @@ namespace Maze
         public int MaxHealth;
         public int Health;
 
-        [Inject] private GameOverPanel _gameOverPanel;
+        [Inject] private GameResultPanel _gameResultPanel;
         
         public void Initialize()
         {
@@ -29,7 +29,7 @@ namespace Maze
 
             if (Health <= 0)
             {
-                _gameOverPanel.Show();
+                _gameResultPanel.Show(false);
             }
         }
     }

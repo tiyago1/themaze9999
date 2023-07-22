@@ -12,7 +12,7 @@ namespace Maze
     public class Player : MonoBehaviour
     {
         [Inject] private PlayerController _playerController;
-        [Inject] private GameOverPanel _gameOverPanel;
+        [Inject] private GameResultPanel _gameResultPanel;
         [Inject] private SignalBus _signalBus;
 
         public List<Sprite> ArrowSprites;
@@ -32,7 +32,7 @@ namespace Maze
         public void Initialize()
         {
             _isInputBlocked = false;
-            _signalBus.Subscribe<GameOverPanel>(() => { _isInputBlocked = true; });
+            _signalBus.Subscribe<GameOver>(() => { _isInputBlocked = true; });
         }
 
         public void SetTurn()
@@ -101,7 +101,7 @@ namespace Maze
             {
                 _timerTween = DOVirtual.Float(0, 1, TimerDuration, (second) => { timerImage.fillAmount = second; })
                     .SetEase(Ease.Linear)
-                    .OnComplete(() => { _gameOverPanel.Show(); });
+                    .OnComplete(() => { _gameResultPanel.Show(false); });
             }
         }
     }

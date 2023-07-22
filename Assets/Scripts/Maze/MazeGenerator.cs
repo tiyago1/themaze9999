@@ -118,15 +118,18 @@ public class MazeGenerator : MonoBehaviour
         Vector2 startPos = new Vector2(-(cellSize * (mazeColumns / 2)) + (cellSize / 2), -(cellSize * (mazeRows / 2)) + (cellSize / 2));
         Vector2 spawnPos = startPos;
 
-
+        bool isFill = false;
         for (int x = 1; x <= mazeColumns; x++)
         {
+            isFill = !isFill;
+
             for (int y = 1; y <= mazeRows; y++)
             {
-                GenerateCell(spawnPos, new Vector2(x, y));
-
+                var cell = GenerateCell(spawnPos, new Vector2(x, y));
+                cell.cScript.GrayArea.gameObject.SetActive(isFill);
                 // Increase spawnPos y.
                 spawnPos.y += cellSize;
+                isFill = !isFill;
             }
 
             // Reset spawnPos y and increase spawnPos x.
@@ -191,14 +194,14 @@ public class MazeGenerator : MonoBehaviour
 
         EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
-        Debug.Log("MakeExit 0");
+        // Debug.Log("MakeExit 0");
         // Get edge cell randomly from list.
         while (EndCell.gridPos.x == StartCell.gridPos.x || EndCell.gridPos.y == StartCell.gridPos.y)
         {
             EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
         }
 
-        Debug.Log("MakeExit 1");
+        // Debug.Log("MakeExit 1");
 
         // Remove appropriate wall for chosen edge cell.
         if (EndCell.gridPos.x == 0) SetGate(EndCell.cScript, 1, false);
@@ -208,8 +211,9 @@ public class MazeGenerator : MonoBehaviour
 
         EndCell.cScript.SetType(CellType.Empty);
         EndCell.cScript.SetLight(Color.green);
+        // EndCell.cScript.GrayArea.GetComponent<SpriteMask>().enabled = false;
 
-        Debug.Log("Maze generation exit finished." + EndCell.gridPos);
+        // Debug.Log("Maze generation exit finished." + EndCell.gridPos);
     }
 
     public void MakeEnter()
@@ -228,6 +232,7 @@ public class MazeGenerator : MonoBehaviour
         // Get edge cell randomly from list.
 
         StartCell = edgeCells[Random.Range(0, edgeCells.Count)];
+        StartCell.cScript.GrayArea.GetComponent<SpriteMask>().enabled = false;
 
         // Remove appropriate wall for chosen edge cell.
 
@@ -237,7 +242,7 @@ public class MazeGenerator : MonoBehaviour
         else SetGate(StartCell.cScript, 4, true);
 
         StartCell.cScript.SetLight(Color.red);
-        Debug.Log("Maze generation enter finished. " + StartCell.cScript);
+        // Debug.Log("Maze generation enter finished. " + StartCell.cScript);
     }
 
     public Cell getCellByGridPos(Vector2 gridPos)
@@ -328,6 +333,7 @@ public class MazeGenerator : MonoBehaviour
         int returnValue = -1;
         openSet.Add(startingCell);
         Debug.Log("AStar 0");
+        bool isReachedToEndCell = false;
         while (openSet.Count > 0)
         {
             Cell currentCell = openSet[0];
@@ -344,7 +350,7 @@ public class MazeGenerator : MonoBehaviour
 
             if (currentCell.gridPos == EndCell.gridPos)
             {
-                returnValue = RetracePath(StartCell, EndCell);
+                isReachedToEndCell = true;
                 break;
             }
 
@@ -370,7 +376,12 @@ public class MazeGenerator : MonoBehaviour
             }
         }
 
-        Debug.Log("AStar 1");
+        if (isReachedToEndCell)
+        {
+            returnValue = RetracePath(StartCell, EndCell);
+        }
+        
+        Debug.Log("AStar 1" + returnValue);
 
         return returnValue;
     }
@@ -520,7 +531,7 @@ public class MazeGenerator : MonoBehaviour
         }
     }
 
-    public void GenerateCell(Vector2 pos, Vector2 keyPos)
+    public Cell GenerateCell(Vector2 pos, Vector2 keyPos)
     {
         // Create new Cell object.
         Cell newCell = new Cell();
@@ -542,6 +553,7 @@ public class MazeGenerator : MonoBehaviour
         // Add to Lists.
         allCells[keyPos] = newCell;
         unvisited.Add(newCell);
+        return newCell;
     }
 
     public void DeleteMaze()
