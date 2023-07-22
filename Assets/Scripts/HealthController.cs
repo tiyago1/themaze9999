@@ -23,7 +23,7 @@ namespace Maze
         public void TakeDamage()
         {
             Health--;
-            var hearth = HearthsImages[Health - 1];
+            var hearth = HearthsImages[Health];
 
             hearth.transform.DOScale(Vector3.zero, 1);
 

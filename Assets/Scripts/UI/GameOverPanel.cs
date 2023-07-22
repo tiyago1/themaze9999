@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using Zenject;
 
 namespace Maze.UI
@@ -12,5 +13,11 @@ namespace Maze.UI
             this.gameObject.SetActive(true);
             _signalBus.Fire<GameOver>();
         }
+
+        public void Retry()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        
     }
 }

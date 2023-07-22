@@ -118,6 +118,8 @@ public class MazeGenerator : MonoBehaviour
         // Set starting point, set spawn point to start.
         Vector2 startPos = new Vector2(-(cellSize * (mazeColumns / 2)) + (cellSize / 2), -(cellSize * (mazeRows / 2)) + (cellSize / 2));
         Vector2 spawnPos = startPos;
+        
+        
 
         for (int x = 1; x <= mazeColumns; x++)
         {
@@ -201,7 +203,8 @@ public class MazeGenerator : MonoBehaviour
         else SetGate(EndCell.cScript, 4, false);
 
         EndCell.cScript.SetType(CellType.Empty);
-        
+        EndCell.cScript.SetLight(Color.green);
+
         Debug.Log("Maze generation exit finished." + EndCell.gridPos);
 
     }
@@ -230,6 +233,7 @@ public class MazeGenerator : MonoBehaviour
         else if (StartCell.gridPos.y == mazeRows) SetGate(StartCell.cScript, 3,true);
         else SetGate(StartCell.cScript, 4,true);
 
+        StartCell.cScript.SetLight(Color.red);
         Debug.Log("Maze generation enter finished. " + StartCell.cScript);
     }
 
@@ -465,7 +469,7 @@ public class MazeGenerator : MonoBehaviour
         bool isEnter
     )
     {
-        Color color = isEnter ? Color.green : Color.red;
+        Color color = isEnter ? Color.red : Color.green;
         if (wallID == 1) cScript.wallL.GetComponent<SpriteRenderer>().color = color;
         else if (wallID == 2) cScript.wallR.GetComponent<SpriteRenderer>().color = color;
         else if (wallID == 3) cScript.wallU.GetComponent<SpriteRenderer>().color = color;

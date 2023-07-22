@@ -46,11 +46,12 @@ namespace Maze
             bool keyExist = _maze.allCells.ContainsKey(CurrentCell.gridPos + direction);
             if (!keyExist)
             {
+                _healthController.TakeDamage();
                 return;
             }
 
             var nextCell = _maze.allCells[CurrentCell.gridPos + direction];
-            if (nextCell.cScript.GetColumnWithDirection(-direction).IsActive)
+            if ( nextCell.cScript.GetColumnWithDirection(-direction).IsActive)
             {
                 _healthController.TakeDamage();
                 return;

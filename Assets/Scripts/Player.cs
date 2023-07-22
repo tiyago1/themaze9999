@@ -11,6 +11,7 @@ namespace Maze
     public class Player : MonoBehaviour
     {
         [Inject] private PlayerController _playerController;
+        [Inject] private GameOverPanel _gameOverPanel;
         [Inject] private SignalBus _signalBus;
 
         public int Index;
@@ -86,7 +87,11 @@ namespace Maze
             }
             else
             {
-                _timerTween = DOVirtual.Float(0, 1, TimerDuration, (second) => { timerImage.fillAmount = second; }).SetEase(Ease.Linear);
+                _timerTween = DOVirtual.Float(0, 1, TimerDuration, (second) => { timerImage.fillAmount = second; }).SetEase(Ease.Linear).OnComplete(
+                    () =>
+                    {
+                        _gameOverPanel.Show();
+                    });
             }
         }
     }

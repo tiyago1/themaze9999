@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public enum CellType
 {
@@ -15,6 +16,7 @@ public class CellScript : MonoBehaviour
     public Column wallR;
     public Column wallU;
     public Column wallD;
+    public Light2D light;
 
     public SpriteRenderer CellRenderer;
     public List<Color> Colors;
@@ -27,6 +29,12 @@ public class CellScript : MonoBehaviour
     public void SetType(CellType cellType)
     {
         CellRenderer.color = Colors[(int) cellType];
+    }
+
+    public void SetLight(Color color)
+    {
+        light.gameObject.SetActive(true);
+        light.color = color;
     }
 }
 
