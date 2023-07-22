@@ -34,12 +34,18 @@ namespace Maze
 
         public void MoveCell(Vector2 direction)
         {
+            bool keyExist = _maze.allCells.ContainsKey(CurrentCell.gridPos + direction);
+            if (!keyExist)
+            {
+                return;
+            }
+
             var nextCell = _maze.allCells[CurrentCell.gridPos + direction];
             if (nextCell.cScript.GetColumnWithDirection(-direction).IsActive)
             {
                 return;
             }
-            
+
             SetCell(nextCell);
         }
 
@@ -47,8 +53,8 @@ namespace Maze
         {
             CurrentCell = cell;
             // this.transform.position = CurrentCell.cellObject.transform.position;
-            
-            this.transform.DOMove(CurrentCell.cellObject.transform.position,.2f);
+
+            this.transform.DOMove(CurrentCell.cellObject.transform.position, .2f);
         }
     }
 }

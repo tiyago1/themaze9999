@@ -60,6 +60,8 @@ public class MazeGenerator : MonoBehaviour
     private Cell currentCell;
     private Cell checkCell;
 
+    public Cell enterCell;
+
     // Array of all possible neighbour positions.
     private Vector2[] neighbourPositions = new Vector2[] {new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1)};
 
@@ -119,8 +121,8 @@ public class MazeGenerator : MonoBehaviour
 
         CreateCentre();
         RunAlgorithm();
-        MakeExit();
         MakeEnter();
+        MakeExit();
     }
 
     // This is where the fun stuff happens.
@@ -172,6 +174,12 @@ public class MazeGenerator : MonoBehaviour
         // Get edge cell randomly from list.
         Cell newCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
+        if (newCell.gridPos.x == enterCell.gridPos.x || newCell.gridPos.y == enterCell.gridPos.y)
+        {
+            MakeExit();
+            return;
+        }
+        
         // Remove appropriate wall for chosen edge cell.
         if (newCell.gridPos.x == 0) SetGate(newCell.cScript, 1, false);
         else if (newCell.gridPos.x == mazeColumns) SetGate(newCell.cScript, 2, false);
@@ -195,16 +203,16 @@ public class MazeGenerator : MonoBehaviour
         }
 
         // Get edge cell randomly from list.
-        Cell newCell = edgeCells[Random.Range(0, edgeCells.Count)];
+        enterCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
         // Remove appropriate wall for chosen edge cell.
-        if (newCell.gridPos.x == 0) SetGate(newCell.cScript, 1, true);
-        else if (newCell.gridPos.x == mazeColumns) SetGate(newCell.cScript, 2, true);
-        else if (newCell.gridPos.y == mazeRows) SetGate(newCell.cScript, 3, true);
-        else SetGate(newCell.cScript, 4, true);
+        if (enterCell.gridPos.x == 0) SetGate(enterCell.cScript, 1, true);
+        else if (enterCell.gridPos.x == mazeColumns) SetGate(enterCell.cScript, 2, true);
+        else if (enterCell.gridPos.y == mazeRows) SetGate(enterCell.cScript, 3, true);
+        else SetGate(enterCell.cScript, 4, true);
 
-        _playerController.SetCell(newCell);
-        Debug.Log("Maze generation enter finished. " + newCell.gridPos);
+        _playerController.SetCell(enterCell);
+        Debug.Log("Maze generation enter finished. " + enterCell.gridPos);
     }
 
     public List<Cell> GetUnvisitedNeighbours(Cell curCell)
