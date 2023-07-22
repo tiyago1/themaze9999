@@ -86,7 +86,8 @@ public class MazeGenerator : MonoBehaviour
      * pass a rows value and columns value as parameters and the generator will
      * do the rest for you. Enjoy!
      */
-    private void Start()
+
+    public void Initialize()
     {
         GenerateMaze(mazeRows, mazeColumns);
         for (int i = 0; i < 5; i++)
@@ -97,8 +98,6 @@ public class MazeGenerator : MonoBehaviour
                 break;
             }
         }
-        
-        _playerController.Initialize();
     }
 
     private void GenerateMaze(int rows, int columns)

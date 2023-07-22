@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using DG.Tweening;
+using Maze.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,8 @@ namespace Maze
     public class Player : MonoBehaviour
     {
         [Inject] private PlayerController _playerController;
+        [Inject] private SignalBus _signalBus;
+
         public int Index;
         public bool IsTurn;
         public float TimerDuration;
@@ -19,7 +22,14 @@ namespace Maze
         public KeyCode Right;
         public Image timerImage;
         private Tweener _timerTween;
-        
+        private bool _isInputBlocked;
+
+        public void Initialize()
+        {
+            _isInputBlocked = false;
+            _signalBus.Subscribe<GameOverPanel>(() => { _isInputBlocked = true; });
+        }
+
         public void SetTurn()
         {
             IsTurn = true;
@@ -30,7 +40,7 @@ namespace Maze
 
         private void Update()
         {
-            if (!IsTurn)
+            if (!IsTurn || _isInputBlocked)
             {
                 return;
             }
@@ -64,7 +74,7 @@ namespace Maze
                 _timerTween.Kill();
                 _timerTween = null;
             }
-            
+
             timerImage.fillAmount = 0;
         }
 

@@ -7,14 +7,19 @@ namespace Maze
     public class PlayerController : MonoBehaviour
     {
         [Inject] private MazeGenerator _maze;
+        [Inject] private HealthController _healthController;
+        
         public MazeGenerator.Cell CurrentCell;
         public Player p1;
         public Player p2;
-
+        
+        
         private Player activeTurnPlayer;
 
         public void Initialize()
         {
+            _healthController.Initialize();
+
             CurrentCell = _maze.StartCell;
             this.transform.position = CurrentCell.cellObject.transform.position;
 
@@ -47,6 +52,7 @@ namespace Maze
             var nextCell = _maze.allCells[CurrentCell.gridPos + direction];
             if (nextCell.cScript.GetColumnWithDirection(-direction).IsActive)
             {
+                _healthController.TakeDamage();
                 return;
             }
 

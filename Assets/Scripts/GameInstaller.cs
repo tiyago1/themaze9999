@@ -8,6 +8,7 @@ namespace Maze
         public override void InstallBindings()
         {
             SignalBusInstaller.Install(Container);
+            Container.DeclareSignal<GameOver>();
             Container.Bind<ShipStateFactory>().AsSingle();
         }
     }
