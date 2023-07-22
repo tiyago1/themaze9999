@@ -12,6 +12,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Maze;
 using UnityEngine;
 using Zenject;
@@ -88,6 +89,16 @@ public class MazeGenerator : MonoBehaviour
     private void Start()
     {
         GenerateMaze(mazeRows, mazeColumns);
+        for (int i = 0; i < 5; i++)
+        {
+            if (AStar() < 22)
+            {
+                GenerateMaze(mazeRows, mazeColumns);
+                break;
+            }
+        }
+        
+        _playerController.Initialize();
     }
 
     private void GenerateMaze(int rows, int columns)
@@ -97,7 +108,7 @@ public class MazeGenerator : MonoBehaviour
         mazeRows = rows;
         mazeColumns = columns;
         CreateLayout();
-        _playerController.Initialize();
+      
     }
 
     // Creates the grid of cells.
@@ -128,7 +139,6 @@ public class MazeGenerator : MonoBehaviour
         RunAlgorithm();
         MakeEnter();
         MakeExit();
-        AStar();
     }
 
     // This is where the fun stuff happens.
@@ -298,7 +308,7 @@ public class MazeGenerator : MonoBehaviour
         return false;
     }
 
-    public void AStar()
+    public int AStar()
     {
         Cell startingCell = StartCell;
         Cell targetCell = EndCell;
@@ -324,8 +334,7 @@ public class MazeGenerator : MonoBehaviour
 
             if (currentCell.gridPos == EndCell.gridPos)
             {
-                RetracePath(StartCell, EndCell);
-                return;
+                return RetracePath(StartCell, EndCell);
             }
 
             foreach (Cell neighbour in GetNeighbours(currentCell))
@@ -350,9 +359,11 @@ public class MazeGenerator : MonoBehaviour
 
             }
         }
+
+        return 0;
     }
 
-    void RetracePath(Cell startCell, Cell endCell)
+    int RetracePath(Cell startCell, Cell endCell)
     {
         List<Vector2> path = new List<Vector2>();
         Cell currentCell = endCell;
@@ -365,12 +376,14 @@ public class MazeGenerator : MonoBehaviour
 
         path.Reverse();
 
-        foreach (Vector2 oppenheimer in path)
-        {
-            Cell barbie = getCellByGridPos(oppenheimer);
-            barbie.cellObject.GetComponent<SpriteRenderer>().color = Color.red;
-            barbie.cellObject.GetComponent<SpriteRenderer>().enabled = true;
-        }
+        // foreach (Vector2 oppenheimer in path)
+        // {
+        //     Cell barbie = getCellByGridPos(oppenheimer);
+        //     barbie.cellObject.GetComponent<SpriteRenderer>().color = Color.red;
+        //     barbie.cellObject.GetComponent<SpriteRenderer>().enabled = true;
+        // }
+
+        return path.Count;
     }
 
     int GetDistance(Cell cellA, Cell cellB)
