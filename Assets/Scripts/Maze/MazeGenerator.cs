@@ -30,7 +30,9 @@ public class MazeGenerator : MonoBehaviour
     [Tooltip("How many cells wide is the maze. Must be an even number. " + "If number is odd, it will be reduced by 1.\n\n" + "Minimum value of 4.")]
     public int mazeColumns;
 
-    [Header("Maze object variables:")] [Tooltip("Cell prefab object.")] [SerializeField]
+    [Header("Maze object variables:")]
+    [Tooltip("Cell prefab object.")]
+    [SerializeField]
     private GameObject cellPrefab;
 
     [Tooltip("If you want to disable the main sprite so the cell has no background, set to TRUE. This will create a maze with only walls.")]
@@ -63,7 +65,7 @@ public class MazeGenerator : MonoBehaviour
     public Cell enterCell;
 
     // Array of all possible neighbour positions.
-    private Vector2[] neighbourPositions = new Vector2[] {new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1)};
+    private Vector2[] neighbourPositions = new Vector2[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1) };
 
     // Size of the cells, used to determine how far apart to place cells during generation.
     private float cellSize;
@@ -71,6 +73,9 @@ public class MazeGenerator : MonoBehaviour
     private GameObject mazeParent;
 
     [Inject] private PlayerController _playerController;
+
+    public Cell StartCell;
+    public Cell EndCell;
 
     #endregion
 
@@ -122,6 +127,7 @@ public class MazeGenerator : MonoBehaviour
         RunAlgorithm();
         MakeEnter();
         MakeExit();
+        AStar();
     }
 
     // This is where the fun stuff happens.
@@ -169,6 +175,7 @@ public class MazeGenerator : MonoBehaviour
                 edgeCells.Add(cell.Value);
             }
         }
+
         
         Cell newCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
@@ -187,6 +194,16 @@ public class MazeGenerator : MonoBehaviour
         newCell.cScript.SetType(CellType.Empty);
         
         Debug.Log("Maze generation exit finished." + newCell.gridPos);
+
+        // Remove appropriate wall for chosen edge cell.
+
+        if (EndCell.gridPos.x == 0) RemoveWall(EndCell.cScript, 1);
+        else if (EndCell.gridPos.x == mazeColumns) RemoveWall(EndCell.cScript, 2);
+        else if (EndCell.gridPos.y == mazeRows) RemoveWall(EndCell.cScript, 3);
+        else RemoveWall(EndCell.cScript, 4);
+
+        Debug.Log("Maze generation exit finished.");
+
     }
 
     public void MakeEnter()
@@ -203,17 +220,179 @@ public class MazeGenerator : MonoBehaviour
         }
 
         // Get edge cell randomly from list.
-        enterCell = edgeCells[Random.Range(0, edgeCells.Count)];
+
+        StartCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
         // Remove appropriate wall for chosen edge cell.
-        if (enterCell.gridPos.x == 0) SetGate(enterCell.cScript, 1, true);
-        else if (enterCell.gridPos.x == mazeColumns) SetGate(enterCell.cScript, 2, true);
-        else if (enterCell.gridPos.y == mazeRows) SetGate(enterCell.cScript, 3, true);
-        else SetGate(enterCell.cScript, 4, true);
-        enterCell.cScript.SetType(CellType.Empty);
 
-        _playerController.SetCell(enterCell);
-        Debug.Log("Maze generation enter finished. " + enterCell.gridPos);
+        if (StartCell.gridPos.x == 0) RemoveWall(StartCell.cScript, 1);
+        else if (StartCell.gridPos.x == mazeColumns) RemoveWall(StartCell.cScript, 2);
+        else if (StartCell.gridPos.y == mazeRows) RemoveWall(StartCell.cScript, 3);
+        else RemoveWall(StartCell.cScript, 4);
+
+
+        Debug.Log("Maze generation enter finished. " + StartCell.cScript);
+    }
+
+    public Cell getCellByGridPos(Vector2 gridPos)
+    {
+        Cell value = null;
+        foreach (KeyValuePair<Vector2, Cell> cell in allCells)
+        {
+            if (gridPos.x == cell.Key.x && gridPos.y == cell.Key.y)
+            {
+                value = cell.Value;
+                break;
+            }
+        }
+
+        return value;
+    }
+
+    public List<Cell> GetNeighbours(Cell cell)
+    {
+        List<Cell> neighbours = new List<Cell>();
+        Vector2 Nright = new Vector2(cell.gridPos.x + 1, cell.gridPos.y);
+        Vector2 Nleft = new Vector2(cell.gridPos.x - 1, cell.gridPos.y);
+        Vector2 Ndown = new Vector2(cell.gridPos.x, cell.gridPos.y - 1);
+        Vector2 Nup = new Vector2(cell.gridPos.x, cell.gridPos.y + 1);
+
+
+
+        if (allCells.ContainsKey(Nright))
+        {
+            neighbours.Add(getCellByGridPos(Nright));
+        }
+
+        if (allCells.ContainsKey(Nleft))
+        {
+            neighbours.Add(getCellByGridPos(Nleft));
+        }
+
+        if (allCells.ContainsKey(Ndown))
+        {
+            neighbours.Add(getCellByGridPos(Ndown));
+        }
+
+        if (allCells.ContainsKey(Nup))
+        {
+            neighbours.Add(getCellByGridPos(Nup));
+        }
+
+        return neighbours;
+    }
+
+    public bool isWalkable(Cell firstCell, Cell secondCell)
+    {
+        if (firstCell.gridPos.x == secondCell.gridPos.x)
+        {
+            if (firstCell.gridPos.y - secondCell.gridPos.y == 1 && !firstCell.cScript.wallD.IsActive)
+            {
+                return true;
+            }
+
+            if (secondCell.gridPos.y - firstCell.gridPos.y == 1 && !secondCell.cScript.wallD.IsActive)
+            {
+                return true;
+
+            }
+        }
+
+        if (firstCell.gridPos.y == secondCell.gridPos.y)
+        {
+            if (firstCell.gridPos.x - secondCell.gridPos.x == 1 && !firstCell.cScript.wallL.IsActive) { return true; }
+            if (secondCell.gridPos.x - firstCell.gridPos.x == 1 && !secondCell.cScript.wallL.IsActive) { return true; }
+
+        }
+
+        return false;
+    }
+
+    public void AStar()
+    {
+        Cell startingCell = StartCell;
+        Cell targetCell = EndCell;
+
+        List<Cell> openSet = new List<Cell>();
+        HashSet<Cell> closedSet = new HashSet<Cell>();
+
+        openSet.Add(startingCell);
+
+        while (openSet.Count > 0)
+        {
+            Cell currentCell = openSet[0];
+            for (int i = 1; i < openSet.Count; i++)
+            {
+                if (openSet[i].fCost < currentCell.fCost || openSet[i].fCost == currentCell.fCost && openSet[i].hCost < currentCell.hCost)
+                {
+                    currentCell = openSet[i];
+                }
+            }
+
+            openSet.Remove(currentCell);
+            closedSet.Add(currentCell);
+
+            if (currentCell.gridPos == EndCell.gridPos)
+            {
+                RetracePath(StartCell, EndCell);
+                return;
+            }
+
+            foreach (Cell neighbour in GetNeighbours(currentCell))
+            {
+                if (!isWalkable(neighbour, currentCell) || closedSet.Contains(neighbour))
+                {
+                    continue;
+                }
+
+                int newMovementCostToNeighbour = currentCell.gCost + GetDistance(currentCell, neighbour);
+                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, EndCell);
+                    neighbour.parent = currentCell;
+
+                    if (!openSet.Contains(neighbour))
+                    {
+                        openSet.Add(neighbour);
+                    }
+                }
+
+            }
+        }
+    }
+
+    void RetracePath(Cell startCell, Cell endCell)
+    {
+        List<Vector2> path = new List<Vector2>();
+        Cell currentCell = endCell;
+
+        while (currentCell != startCell)
+        {
+            path.Add(currentCell.gridPos);
+            currentCell = currentCell.parent;
+        }
+
+        path.Reverse();
+
+        foreach (Vector2 oppenheimer in path)
+        {
+            Cell barbie = getCellByGridPos(oppenheimer);
+            barbie.cellObject.GetComponent<SpriteRenderer>().color = Color.red;
+            barbie.cellObject.GetComponent<SpriteRenderer>().enabled = true;
+        }
+    }
+
+    int GetDistance(Cell cellA, Cell cellB)
+    {
+        int dstX = (int)Mathf.Abs(cellA.gridPos.x - cellB.gridPos.x);
+        int dstY = (int)Mathf.Abs(cellA.gridPos.y - cellB.gridPos.y);
+
+        if (dstX > dstY)
+        {
+            return 14 * dstY + 10 * (dstX - dstY);
+        }
+        return 14 * dstX + 10 * (dstY - dstX);
     }
 
     public List<Cell> GetUnvisitedNeighbours(Cell curCell)
@@ -312,7 +491,7 @@ public class MazeGenerator : MonoBehaviour
         // We then use the remaining 3 ints to remove 3 of the centre cells from the 'unvisited' list.
         // This ensures that one of the centre cells will connect to the maze but the other three won't.
         // This way, the centre room will only have 1 entry / exit point.
-        List<int> rndList = new List<int> {0, 1, 2, 3};
+        List<int> rndList = new List<int> { 0, 1, 2, 3 };
         int startCell = rndList[Random.Range(0, rndList.Count)];
         rndList.Remove(startCell);
         currentCell = centreCells[startCell];
@@ -379,5 +558,17 @@ public class MazeGenerator : MonoBehaviour
         public Vector2 gridPos;
         public GameObject cellObject;
         public CellScript cScript;
+        public Cell parent;
+
+        public int gCost;
+        public int hCost;
+
+        public int fCost
+        {
+            get
+            {
+                return gCost + hCost;
+            }
+        }
     }
 }
