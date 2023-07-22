@@ -8,12 +8,12 @@ namespace Maze
     {
         [Inject] private MazeGenerator _maze;
         [Inject] private HealthController _healthController;
-        
+
         public MazeGenerator.Cell CurrentCell;
         public Player p1;
         public Player p2;
-        
-        
+
+
         private Player activeTurnPlayer;
 
         public void Initialize()
@@ -46,14 +46,20 @@ namespace Maze
             bool keyExist = _maze.allCells.ContainsKey(CurrentCell.gridPos + direction);
             if (!keyExist)
             {
+                var column= CurrentCell.cScript.GetColumnWithDirection(direction);
+                column.ShowWallInteractionEffect(direction);
                 _healthController.TakeDamage();
+                TurnChange();
                 return;
             }
 
             var nextCell = _maze.allCells[CurrentCell.gridPos + direction];
-            if ( nextCell.cScript.GetColumnWithDirection(-direction).IsActive)
+            var nextCellColumn = nextCell.cScript.GetColumnWithDirection(-direction);
+            if (nextCellColumn.IsActive)
             {
+                nextCellColumn.ShowWallInteractionEffect(direction);
                 _healthController.TakeDamage();
+                TurnChange();
                 return;
             }
 
@@ -66,7 +72,7 @@ namespace Maze
             CurrentCell = cell;
             // this.transform.position = CurrentCell.cellObject.transform.position;
 
-            this.transform.DOMove(CurrentCell.cellObject.transform.position, .2f);
+            this.transform.DOMove(CurrentCell.cellObject.transform.position, .1f);
         }
     }
 }

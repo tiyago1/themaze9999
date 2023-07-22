@@ -266,7 +266,7 @@ MonoBehaviour:
   Direction: {x: 1, y: 0}
   IsActive: 0
   Colors:
-  - {r: 0, g: 0.17153597, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 5613699558532446274}
 --- !u!1 &5158515144284644851
@@ -569,7 +569,7 @@ MonoBehaviour:
   Direction: {x: 0, y: -1}
   IsActive: 0
   Colors:
-  - {r: 0, g: 0.17153597, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 4559049063581692117}
 --- !u!1 &8343782431342192657
@@ -672,7 +672,7 @@ MonoBehaviour:
   Direction: {x: 0, y: 1}
   IsActive: 0
   Colors:
-  - {r: 0, g: 0.17153597, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 1275148878905757167}
 --- !u!1 &8762449045252334187
@@ -775,6 +775,6 @@ MonoBehaviour:
   Direction: {x: -1, y: 0}
   IsActive: 0
   Colors:
-  - {r: 0, g: 0.17153597, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   - {r: 0.754717, g: 0.71555716, b: 0.71555716, a: 0}
   CellRenderer: {fileID: 8606176434241879018}

@@ -31,9 +31,7 @@ public class MazeGenerator : MonoBehaviour
     [Tooltip("How many cells wide is the maze. Must be an even number. " + "If number is odd, it will be reduced by 1.\n\n" + "Minimum value of 4.")]
     public int mazeColumns;
 
-    [Header("Maze object variables:")]
-    [Tooltip("Cell prefab object.")]
-    [SerializeField]
+    [Header("Maze object variables:")] [Tooltip("Cell prefab object.")] [SerializeField]
     private GameObject cellPrefab;
 
     [Tooltip("If you want to disable the main sprite so the cell has no background, set to TRUE. This will create a maze with only walls.")]
@@ -66,7 +64,7 @@ public class MazeGenerator : MonoBehaviour
     public Cell enterCell;
 
     // Array of all possible neighbour positions.
-    private Vector2[] neighbourPositions = new Vector2[] { new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1) };
+    private Vector2[] neighbourPositions = new Vector2[] {new Vector2(-1, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(0, -1)};
 
     // Size of the cells, used to determine how far apart to place cells during generation.
     private float cellSize;
@@ -92,6 +90,8 @@ public class MazeGenerator : MonoBehaviour
         GenerateMaze(mazeRows, mazeColumns);
         for (int i = 0; i < 5; i++)
         {
+            Debug.Log("Attempt " + i);
+
             if (AStar() < 22)
             {
                 GenerateMaze(mazeRows, mazeColumns);
@@ -107,7 +107,6 @@ public class MazeGenerator : MonoBehaviour
         mazeRows = rows;
         mazeColumns = columns;
         CreateLayout();
-      
     }
 
     // Creates the grid of cells.
@@ -118,8 +117,7 @@ public class MazeGenerator : MonoBehaviour
         // Set starting point, set spawn point to start.
         Vector2 startPos = new Vector2(-(cellSize * (mazeColumns / 2)) + (cellSize / 2), -(cellSize * (mazeRows / 2)) + (cellSize / 2));
         Vector2 spawnPos = startPos;
-        
-        
+
 
         for (int x = 1; x <= mazeColumns; x++)
         {
@@ -148,6 +146,7 @@ public class MazeGenerator : MonoBehaviour
         // Get start cell, make it visited (i.e. remove from unvisited list).
         unvisited.Remove(currentCell);
 
+        Debug.Log("RunAlgorithm 0");
         // While we have unvisited cells.
         while (unvisited.Count > 0)
         {
@@ -173,6 +172,8 @@ public class MazeGenerator : MonoBehaviour
                 stack.Remove(currentCell);
             }
         }
+
+        Debug.Log("RunAlgorithm 1");
     }
 
     public void MakeExit()
@@ -190,11 +191,14 @@ public class MazeGenerator : MonoBehaviour
 
         EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
+        Debug.Log("MakeExit 0");
         // Get edge cell randomly from list.
         while (EndCell.gridPos.x == StartCell.gridPos.x || EndCell.gridPos.y == StartCell.gridPos.y)
         {
             EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
         }
+
+        Debug.Log("MakeExit 1");
 
         // Remove appropriate wall for chosen edge cell.
         if (EndCell.gridPos.x == 0) SetGate(EndCell.cScript, 1, false);
@@ -206,7 +210,6 @@ public class MazeGenerator : MonoBehaviour
         EndCell.cScript.SetLight(Color.green);
 
         Debug.Log("Maze generation exit finished." + EndCell.gridPos);
-
     }
 
     public void MakeEnter()
@@ -228,10 +231,10 @@ public class MazeGenerator : MonoBehaviour
 
         // Remove appropriate wall for chosen edge cell.
 
-        if (StartCell.gridPos.x == 0) SetGate(StartCell.cScript, 1,true);
-        else if (StartCell.gridPos.x == mazeColumns) SetGate(StartCell.cScript, 2,true);
-        else if (StartCell.gridPos.y == mazeRows) SetGate(StartCell.cScript, 3,true);
-        else SetGate(StartCell.cScript, 4,true);
+        if (StartCell.gridPos.x == 0) SetGate(StartCell.cScript, 1, true);
+        else if (StartCell.gridPos.x == mazeColumns) SetGate(StartCell.cScript, 2, true);
+        else if (StartCell.gridPos.y == mazeRows) SetGate(StartCell.cScript, 3, true);
+        else SetGate(StartCell.cScript, 4, true);
 
         StartCell.cScript.SetLight(Color.red);
         Debug.Log("Maze generation enter finished. " + StartCell.cScript);
@@ -259,7 +262,6 @@ public class MazeGenerator : MonoBehaviour
         Vector2 Nleft = new Vector2(cell.gridPos.x - 1, cell.gridPos.y);
         Vector2 Ndown = new Vector2(cell.gridPos.x, cell.gridPos.y - 1);
         Vector2 Nup = new Vector2(cell.gridPos.x, cell.gridPos.y + 1);
-
 
 
         if (allCells.ContainsKey(Nright))
@@ -297,15 +299,20 @@ public class MazeGenerator : MonoBehaviour
             if (secondCell.gridPos.y - firstCell.gridPos.y == 1 && !secondCell.cScript.wallD.IsActive)
             {
                 return true;
-
             }
         }
 
         if (firstCell.gridPos.y == secondCell.gridPos.y)
         {
-            if (firstCell.gridPos.x - secondCell.gridPos.x == 1 && !firstCell.cScript.wallL.IsActive) { return true; }
-            if (secondCell.gridPos.x - firstCell.gridPos.x == 1 && !secondCell.cScript.wallL.IsActive) { return true; }
+            if (firstCell.gridPos.x - secondCell.gridPos.x == 1 && !firstCell.cScript.wallL.IsActive)
+            {
+                return true;
+            }
 
+            if (secondCell.gridPos.x - firstCell.gridPos.x == 1 && !secondCell.cScript.wallL.IsActive)
+            {
+                return true;
+            }
         }
 
         return false;
@@ -318,9 +325,9 @@ public class MazeGenerator : MonoBehaviour
 
         List<Cell> openSet = new List<Cell>();
         HashSet<Cell> closedSet = new HashSet<Cell>();
-
+        int returnValue = -1;
         openSet.Add(startingCell);
-
+        Debug.Log("AStar 0");
         while (openSet.Count > 0)
         {
             Cell currentCell = openSet[0];
@@ -337,7 +344,8 @@ public class MazeGenerator : MonoBehaviour
 
             if (currentCell.gridPos == EndCell.gridPos)
             {
-                return RetracePath(StartCell, EndCell);
+                returnValue = RetracePath(StartCell, EndCell);
+                break;
             }
 
             foreach (Cell neighbour in GetNeighbours(currentCell))
@@ -359,11 +367,12 @@ public class MazeGenerator : MonoBehaviour
                         openSet.Add(neighbour);
                     }
                 }
-
             }
         }
 
-        return 0;
+        Debug.Log("AStar 1");
+
+        return returnValue;
     }
 
     int RetracePath(Cell startCell, Cell endCell)
@@ -371,13 +380,16 @@ public class MazeGenerator : MonoBehaviour
         List<Vector2> path = new List<Vector2>();
         Cell currentCell = endCell;
 
+        Debug.Log("RetracePath 0");
         while (currentCell != startCell)
         {
             path.Add(currentCell.gridPos);
             currentCell = currentCell.parent;
         }
 
+        Debug.Log("RetracePath 1");
         path.Reverse();
+        Debug.Log("RetracePath 2");
 
         // foreach (Vector2 oppenheimer in path)
         // {
@@ -391,13 +403,14 @@ public class MazeGenerator : MonoBehaviour
 
     int GetDistance(Cell cellA, Cell cellB)
     {
-        int dstX = (int)Mathf.Abs(cellA.gridPos.x - cellB.gridPos.x);
-        int dstY = (int)Mathf.Abs(cellA.gridPos.y - cellB.gridPos.y);
+        int dstX = (int) Mathf.Abs(cellA.gridPos.x - cellB.gridPos.x);
+        int dstY = (int) Mathf.Abs(cellA.gridPos.y - cellB.gridPos.y);
 
         if (dstX > dstY)
         {
             return 14 * dstY + 10 * (dstX - dstY);
         }
+
         return 14 * dstX + 10 * (dstY - dstX);
     }
 
@@ -497,7 +510,7 @@ public class MazeGenerator : MonoBehaviour
         // We then use the remaining 3 ints to remove 3 of the centre cells from the 'unvisited' list.
         // This ensures that one of the centre cells will connect to the maze but the other three won't.
         // This way, the centre room will only have 1 entry / exit point.
-        List<int> rndList = new List<int> { 0, 1, 2, 3 };
+        List<int> rndList = new List<int> {0, 1, 2, 3};
         int startCell = rndList[Random.Range(0, rndList.Count)];
         rndList.Remove(startCell);
         currentCell = centreCells[startCell];
@@ -571,10 +584,7 @@ public class MazeGenerator : MonoBehaviour
 
         public int fCost
         {
-            get
-            {
-                return gCost + hCost;
-            }
+            get { return gCost + hCost; }
         }
     }
 }

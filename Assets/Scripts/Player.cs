@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using Maze.UI;
 using TMPro;
@@ -14,6 +15,8 @@ namespace Maze
         [Inject] private GameOverPanel _gameOverPanel;
         [Inject] private SignalBus _signalBus;
 
+        public List<Sprite> ArrowSprites;
+
         public int Index;
         public bool IsTurn;
         public float TimerDuration;
@@ -22,6 +25,7 @@ namespace Maze
         public KeyCode Left;
         public KeyCode Right;
         public Image timerImage;
+        public Image arrowImage;
         private Tweener _timerTween;
         private bool _isInputBlocked;
 
@@ -48,21 +52,29 @@ namespace Maze
 
             if (Input.GetKeyDown(Up))
             {
+                arrowImage.gameObject.SetActive(true);
+                arrowImage.sprite = ArrowSprites[0];
                 _playerController.MoveCell(new Vector2(0, 1));
             }
 
             if (Input.GetKeyDown(Left))
             {
+                arrowImage.gameObject.SetActive(true);
+                arrowImage.sprite = ArrowSprites[1];
                 _playerController.MoveCell(new Vector2(-1, 0));
             }
 
             if (Input.GetKeyDown(Down))
             {
+                arrowImage.gameObject.SetActive(true);
+                arrowImage.sprite = ArrowSprites[2];
                 _playerController.MoveCell(new Vector2(0, -1));
             }
 
             if (Input.GetKeyDown(Right))
             {
+                arrowImage.gameObject.SetActive(true);
+                arrowImage.sprite = ArrowSprites[3];
                 _playerController.MoveCell(new Vector2(1, 0));
             }
         }
@@ -87,11 +99,9 @@ namespace Maze
             }
             else
             {
-                _timerTween = DOVirtual.Float(0, 1, TimerDuration, (second) => { timerImage.fillAmount = second; }).SetEase(Ease.Linear).OnComplete(
-                    () =>
-                    {
-                        _gameOverPanel.Show();
-                    });
+                _timerTween = DOVirtual.Float(0, 1, TimerDuration, (second) => { timerImage.fillAmount = second; })
+                    .SetEase(Ease.Linear)
+                    .OnComplete(() => { _gameOverPanel.Show(); });
             }
         }
     }
