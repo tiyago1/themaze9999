@@ -1,7 +1,8 @@
 ﻿using System.Collections;
-using Timers;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Maze
@@ -16,20 +17,13 @@ namespace Maze
         public KeyCode Down;
         public KeyCode Left;
         public KeyCode Right;
-        public TextMeshProUGUI timerText;
-        private Coroutine _timerCoroutine;
+        public Image timerImage;
+        private Tweener _timerTween;
         
         public void SetTurn()
         {
             IsTurn = true;
-
-            if (_timerCoroutine != null)
-            {
-                StopCoroutine(_timerCoroutine); 
-                _timerCoroutine = null;
-            }
-            
-            _timerCoroutine = StartCoroutine(Timer());
+            StartTimer();
 
             // TimersManager.SetTimer(this, TimerDuration, TimesUp, OnProgressing);
         }
@@ -40,7 +34,7 @@ namespace Maze
             {
                 return;
             }
-            
+
             if (Input.GetKeyDown(Up))
             {
                 _playerController.MoveCell(new Vector2(0, 1));
@@ -61,36 +55,29 @@ namespace Maze
                 _playerController.MoveCell(new Vector2(1, 0));
             }
         }
-        
+
         public void TurnEnd()
         {
             IsTurn = false;
-            if (_timerCoroutine != null)
+            if (_timerTween != null)
             {
-                StopCoroutine(_timerCoroutine); 
-                _timerCoroutine = null;
+                _timerTween.Kill();
+                _timerTween = null;
             }
             
-            timerText.gameObject.SetActive(false);
-        }
-        
-        private void OnProgressing(int time)
-        {
-            timerText.text = time.ToString();
+            timerImage.fillAmount = 0;
         }
 
-        private IEnumerator Timer()
+        private void StartTimer()
         {
-            timerText.gameObject.SetActive(true);
-
-            for (int i = (int)TimerDuration; i >= 0; i--)
+            if (_timerTween != null && !_timerTween.IsComplete())
             {
-                OnProgressing(i);
-                yield return new WaitForSecondsRealtime(1);
+                _timerTween.TogglePause();
             }
-
-            _playerController.TurnChange();
+            else
+            {
+                _timerTween = DOVirtual.Float(0, 1, TimerDuration, (second) => { timerImage.fillAmount = second; }).SetEase(Ease.Linear);
+            }
         }
-        
     }
 }
