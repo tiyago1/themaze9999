@@ -185,6 +185,8 @@ public class MazeGenerator : MonoBehaviour
         else if (newCell.gridPos.y == mazeRows) SetGate(newCell.cScript, 3, false);
         else SetGate(newCell.cScript, 4, false);
 
+        newCell.cScript.SetType(CellType.Empty);
+        
         Debug.Log("Maze generation exit finished." + newCell.gridPos);
     }
 
@@ -209,6 +211,7 @@ public class MazeGenerator : MonoBehaviour
         else if (enterCell.gridPos.x == mazeColumns) SetGate(enterCell.cScript, 2, true);
         else if (enterCell.gridPos.y == mazeRows) SetGate(enterCell.cScript, 3, true);
         else SetGate(enterCell.cScript, 4, true);
+        enterCell.cScript.SetType(CellType.Empty);
 
         _playerController.SetCell(enterCell);
         Debug.Log("Maze generation enter finished. " + enterCell.gridPos);
@@ -335,6 +338,7 @@ public class MazeGenerator : MonoBehaviour
         newCell.cellObject.name = "Cell - X:" + keyPos.x + " Y:" + keyPos.y;
         // Get reference to attached CellScript.
         newCell.cScript = newCell.cellObject.GetComponent<CellScript>();
+        newCell.cScript.SetType(CellType.Fog);
         // Disable Cell sprite, if applicable.
         if (disableCellSprite) newCell.cellObject.GetComponent<SpriteRenderer>().enabled = false;
 
