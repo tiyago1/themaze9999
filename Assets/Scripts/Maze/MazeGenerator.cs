@@ -97,6 +97,7 @@ public class MazeGenerator : MonoBehaviour
         mazeRows = rows;
         mazeColumns = columns;
         CreateLayout();
+        _playerController.Initialize();
     }
 
     // Creates the grid of cells.
@@ -176,7 +177,6 @@ public class MazeGenerator : MonoBehaviour
             }
         }
 
-        
         EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
         // Get edge cell randomly from list.
@@ -194,15 +194,6 @@ public class MazeGenerator : MonoBehaviour
         EndCell.cScript.SetType(CellType.Empty);
         
         Debug.Log("Maze generation exit finished." + EndCell.gridPos);
-
-        // Remove appropriate wall for chosen edge cell.
-
-        if (EndCell.gridPos.x == 0) RemoveWall(EndCell.cScript, 1);
-        else if (EndCell.gridPos.x == mazeColumns) RemoveWall(EndCell.cScript, 2);
-        else if (EndCell.gridPos.y == mazeRows) RemoveWall(EndCell.cScript, 3);
-        else RemoveWall(EndCell.cScript, 4);
-
-        Debug.Log("Maze generation exit finished.");
 
     }
 
@@ -225,11 +216,10 @@ public class MazeGenerator : MonoBehaviour
 
         // Remove appropriate wall for chosen edge cell.
 
-        if (StartCell.gridPos.x == 0) RemoveWall(StartCell.cScript, 1);
-        else if (StartCell.gridPos.x == mazeColumns) RemoveWall(StartCell.cScript, 2);
-        else if (StartCell.gridPos.y == mazeRows) RemoveWall(StartCell.cScript, 3);
-        else RemoveWall(StartCell.cScript, 4);
-
+        if (StartCell.gridPos.x == 0) SetGate(StartCell.cScript, 1,true);
+        else if (StartCell.gridPos.x == mazeColumns) SetGate(StartCell.cScript, 2,true);
+        else if (StartCell.gridPos.y == mazeRows) SetGate(StartCell.cScript, 3,true);
+        else SetGate(StartCell.cScript, 4,true);
 
         Debug.Log("Maze generation enter finished. " + StartCell.cScript);
     }

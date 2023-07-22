@@ -13,8 +13,11 @@ namespace Maze
 
         private Player activeTurnPlayer;
 
-        private void Start()
+        public void Initialize()
         {
+            CurrentCell = _maze.StartCell;
+            this.transform.position = CurrentCell.cellObject.transform.position;
+
             TurnChange();
         }
 
@@ -46,6 +49,7 @@ namespace Maze
             {
                 return;
             }
+
             TurnChange();
             SetCell(nextCell);
         }
