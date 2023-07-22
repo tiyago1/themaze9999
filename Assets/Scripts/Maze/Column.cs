@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -12,11 +13,13 @@ public class Column : MonoBehaviour
     private Color _activeColor;
     private Sequence _sequence;
     private Vector3 _defaultPosition;
+    private Vector3 _defaultScale;
 
     private void Awake()
     {
         SetActive(true);
         _defaultPosition = this.transform.localPosition;
+        _defaultScale = this.transform.localScale;
     }
 
     public void SetActive(bool isActive)
@@ -29,10 +32,11 @@ public class Column : MonoBehaviour
         // this.gameObject.SetActive(IsActive);
     }
 
-    public void ShowWallInteractionEffect(Vector3 direction)
+    public void ShowWallInteractionEffect(Vector3 direction, Action onComplete)
     {
         CellRenderer.color = _activeColor;
         CellRenderer.transform.localPosition = _defaultPosition;
+        CellRenderer.transform.localScale = _defaultScale;
         // CellRenderer.DOFade(0, .6f);
         if (_sequence != null && !_sequence.IsComplete())
         {
@@ -40,13 +44,18 @@ public class Column : MonoBehaviour
         }
 
         _sequence = DOTween.Sequence();
-        // _sequence.Join(CellRenderer.transform.DOLocalMove(_defaultPosition + (direction * 0.3f), 0.5f).SetEase(Ease.InOutBack));
+        _sequence.Join(CellRenderer.transform.DOLocalMove(_defaultPosition + (direction * 0.3f), 0.3f).SetEase(Ease.InOutBack));
+        _sequence.Join(CellRenderer.transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InOutBack));
         _sequence.Join(CellRenderer.DOColor(Color.red, .3f));
-        // _sequence.Append(CellRenderer.DOColor(_activeColor, .3f));
         _sequence.OnComplete(() =>
             {
                 CellRenderer.color = _activeColor;
-                CellRenderer.transform.localPosition = _defaultPosition;
+                Sequence growUp = DOTween.Sequence();
+                growUp.Join(CellRenderer.transform.DOLocalMove(_defaultPosition, .2f));
+                growUp.Join(CellRenderer.transform.DOScale(_defaultScale, .2f));
+                growUp.SetEase(Ease.InOutBack);
+                growUp.Play();
+                onComplete?.Invoke();
             }
         );
         _sequence.Play();
