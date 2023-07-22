@@ -97,6 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Direction: {x: 1, y: 0}
   IsActive: 0
 --- !u!1 &5158515144284644851
 GameObject:
@@ -199,6 +200,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3a2747b9cac6d4ea3052da6b6485d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walls:
+  - {fileID: 3858663197284278270}
+  - {fileID: 4589831653307380438}
+  - {fileID: 5344595505274833055}
+  - {fileID: 4417468041565832954}
   wallL: {fileID: 3858663197284278270}
   wallR: {fileID: 4589831653307380438}
   wallU: {fileID: 5344595505274833055}
@@ -300,6 +306,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Direction: {x: 0, y: -1}
   IsActive: 0
 --- !u!1 &8343782431342192657
 GameObject:
@@ -398,6 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Direction: {x: 0, y: 1}
   IsActive: 0
 --- !u!1 &8762449045252334187
 GameObject:
@@ -496,4 +504,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c2045716adf454588dd725a8380fb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Direction: {x: -1, y: 0}
   IsActive: 0

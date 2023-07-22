@@ -12,7 +12,9 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Maze;
 using UnityEngine;
+using Zenject;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -42,7 +44,7 @@ public class MazeGenerator : MonoBehaviour
     private int centreSize = 2;
 
     // Dictionary to hold and locate all cells in maze.
-    private Dictionary<Vector2, Cell> allCells = new Dictionary<Vector2, Cell>();
+    public Dictionary<Vector2, Cell> allCells = new Dictionary<Vector2, Cell>();
 
     // List to hold unvisited cells.
     private List<Cell> unvisited = new List<Cell>();
@@ -65,6 +67,9 @@ public class MazeGenerator : MonoBehaviour
     private float cellSize;
 
     private GameObject mazeParent;
+
+    [Inject] private PlayerController _playerController;
+    
 
     #endregion
 
@@ -198,6 +203,7 @@ public class MazeGenerator : MonoBehaviour
         else if (newCell.gridPos.y == mazeRows) SetGate(newCell.cScript, 3, true);
         else SetGate(newCell.cScript, 4, true);
 
+        _playerController.SetCell(newCell);
         Debug.Log("Maze generation enter finished. " + newCell.gridPos);
     }
 
@@ -269,7 +275,7 @@ public class MazeGenerator : MonoBehaviour
         bool isEnter
     )
     {
-        Color color = isEnter ? Color.red : Color.green;
+        Color color = isEnter ? Color.green : Color.red;
         if (wallID == 1) cScript.wallL.GetComponent<SpriteRenderer>().color = color;
         else if (wallID == 2) cScript.wallR.GetComponent<SpriteRenderer>().color = color;
         else if (wallID == 3) cScript.wallU.GetComponent<SpriteRenderer>().color = color;
