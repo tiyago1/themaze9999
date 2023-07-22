@@ -8,28 +8,29 @@ namespace Maze
     {
         [Inject] private MazeGenerator _maze;
         public MazeGenerator.Cell CurrentCell;
+        public Player p1;
+        public Player p2;
 
-        private void Update()
+        private Player activeTurnPlayer;
+
+        private void Start()
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            TurnChange();
+        }
+
+        public void TurnChange()
+        {
+            if (activeTurnPlayer == null)
             {
-                MoveCell(new Vector2(0, 1));
+                activeTurnPlayer = p1;
+            }
+            else
+            {
+                activeTurnPlayer.TurnEnd();
+                activeTurnPlayer = activeTurnPlayer == p1 ? p2 : p1;
             }
 
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                MoveCell(new Vector2(-1, 0));
-            }
-
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                MoveCell(new Vector2(0, -1));
-            }
-
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                MoveCell(new Vector2(1, 0));
-            }
+            activeTurnPlayer.SetTurn();
         }
 
         public void MoveCell(Vector2 direction)
@@ -45,7 +46,7 @@ namespace Maze
             {
                 return;
             }
-
+            TurnChange();
             SetCell(nextCell);
         }
 

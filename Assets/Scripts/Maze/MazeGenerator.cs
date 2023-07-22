@@ -71,7 +71,6 @@ public class MazeGenerator : MonoBehaviour
     private GameObject mazeParent;
 
     [Inject] private PlayerController _playerController;
-    
 
     #endregion
 
