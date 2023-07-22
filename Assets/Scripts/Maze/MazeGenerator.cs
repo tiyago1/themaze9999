@@ -177,23 +177,23 @@ public class MazeGenerator : MonoBehaviour
         }
 
         
-        Cell newCell = edgeCells[Random.Range(0, edgeCells.Count)];
+        EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
 
         // Get edge cell randomly from list.
-        while (newCell.gridPos.x == enterCell.gridPos.x || newCell.gridPos.y == enterCell.gridPos.y)
+        while (EndCell.gridPos.x == StartCell.gridPos.x || EndCell.gridPos.y == StartCell.gridPos.y)
         {
-            newCell = edgeCells[Random.Range(0, edgeCells.Count)];
+            EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
         }
 
         // Remove appropriate wall for chosen edge cell.
-        if (newCell.gridPos.x == 0) SetGate(newCell.cScript, 1, false);
-        else if (newCell.gridPos.x == mazeColumns) SetGate(newCell.cScript, 2, false);
-        else if (newCell.gridPos.y == mazeRows) SetGate(newCell.cScript, 3, false);
-        else SetGate(newCell.cScript, 4, false);
+        if (EndCell.gridPos.x == 0) SetGate(EndCell.cScript, 1, false);
+        else if (EndCell.gridPos.x == mazeColumns) SetGate(EndCell.cScript, 2, false);
+        else if (EndCell.gridPos.y == mazeRows) SetGate(EndCell.cScript, 3, false);
+        else SetGate(EndCell.cScript, 4, false);
 
-        newCell.cScript.SetType(CellType.Empty);
+        EndCell.cScript.SetType(CellType.Empty);
         
-        Debug.Log("Maze generation exit finished." + newCell.gridPos);
+        Debug.Log("Maze generation exit finished." + EndCell.gridPos);
 
         // Remove appropriate wall for chosen edge cell.
 
