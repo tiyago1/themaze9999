@@ -9,4 +9,14 @@
     {
         
     }
+
+    public struct MazeGenerateFinished
+    {
+        
+    }
+
+    // public struct AStartCompleted
+    // {
+    //     public int StepCount;
+    // }
 }

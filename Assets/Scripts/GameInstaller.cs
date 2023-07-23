@@ -1,5 +1,4 @@
 ﻿using Zenject;
-using Zenject.Asteroids;
 
 namespace Maze
 {
@@ -8,8 +7,9 @@ namespace Maze
         public override void InstallBindings()
         {
             SignalBusInstaller.Install(Container);
-            Container.DeclareSignal<GameOver>();
-            Container.Bind<ShipStateFactory>().AsSingle();
+            Container.DeclareSignal<GameOver>().OptionalSubscriber();
+            // Container.DeclareSignal<AStartCompleted>().OptionalSubscriber();
+            Container.DeclareSignal<MazeGenerateFinished>().OptionalSubscriber();
         }
     }
 }

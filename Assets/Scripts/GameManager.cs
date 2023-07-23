@@ -1,4 +1,6 @@
-﻿using Maze.UI;
+﻿using System;
+using System.Collections;
+using Maze.UI;
 using UnityEngine;
 using Zenject;
 
@@ -10,10 +12,26 @@ namespace Maze
         [Inject] private HealthController _healthController;
         [Inject] private PlayerController _playerController;
         [Inject] private GameResultPanel _gameResultPanel;
-        
+        [Inject] private SignalBus _signalBus;
+
+        public bool IsInitialized;
         public bool IsGameOver;
 
         public Camera camera;
+
+        private void Awake()
+        {
+            Debug.LogError("Awake");
+        }
+
+        private void Start()
+        {
+            Debug.LogError("Start");
+            if (IsInitialized)
+            {
+                _mazeGenerator.Initialize();
+            }
+        }
 
         private void SetUpCamera(int gridSize)
         {
@@ -33,14 +51,20 @@ namespace Maze
 
         public void Initialize()
         {
+            IsInitialized = true;
             IsGameOver = false;
-            
-            _mazeGenerator.Initialize();
-            _healthController.Initialize();
-            _playerController.Initialize();
-            SetUpCamera(_mazeGenerator.mazeRows);
+            Debug.LogError("Init");
+            _signalBus.Subscribe<MazeGenerateFinished>(OnMazeGenerateFinished);
+            // _mazeGenerator.Initialize();
         }
 
+        private void OnMazeGenerateFinished(MazeGenerateFinished obj)
+        {
+            SetUpCamera(_mazeGenerator.mazeRows);
+            _healthController.Initialize();
+            _playerController.Initialize();
+        }
+        
         public void CheckGameEnd(MazeGenerator.Cell checkCell)
         {
             if (checkCell.gridPos == _mazeGenerator.EndCell.gridPos)

@@ -408,7 +408,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1745282540}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -2071,6 +2071,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e78240ccc3a4e1e98dce36ff008700c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsInitialized: 0
   IsGameOver: 0
   camera: {fileID: 1745282540}
 --- !u!4 &959501068
@@ -3725,6 +3726,7 @@ MonoBehaviour:
   mazeColumns: 8
   cellPrefab: {fileID: 5158515144284644851, guid: 2d0d1536c18be4e4e9de2c3c214bcac3, type: 3}
   disableCellSprite: 1
+  AttemptCount: 0
 --- !u!4 &2132590059
 Transform:
   m_ObjectHideFlags: 0

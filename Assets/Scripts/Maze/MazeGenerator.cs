@@ -10,12 +10,16 @@
  * ~13/05/2018~
  * ---------------------------- */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Maze;
+using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 public class MazeGenerator : MonoBehaviour
 {
@@ -72,9 +76,12 @@ public class MazeGenerator : MonoBehaviour
     private GameObject mazeParent;
 
     [Inject] private PlayerController _playerController;
+    [Inject] private SignalBus _signalBus;
 
     public Cell StartCell;
     public Cell EndCell;
+
+    public int AttemptCount = 0;
 
     #endregion
 
@@ -87,21 +94,81 @@ public class MazeGenerator : MonoBehaviour
 
     public void Initialize()
     {
+        Debug.LogError("MazeGenerator Initialize()");
+        AttemptCount = 0;
         GenerateMaze(mazeRows, mazeColumns);
-        for (int i = 0; i < 5; i++)
-        {
-            Debug.Log("Attempt " + i);
-
-            if (AStar() < 22)
-            {
-                GenerateMaze(mazeRows, mazeColumns);
-                break;
-            }
-        }
+        // _signalBus.Subscribe<AStartCompleted>(OnAStartCompleted);
     }
+
+    private void OnAStartCompleted(int stepCount)
+    {
+        Debug.LogError(AttemptCount + " OnAStartCompleted " + stepCount);
+        if (AttemptCount >= 5)
+        {
+            return;
+        }
+
+        if (stepCount == -1)
+        {
+            Debug.LogError("yapma bunu");
+        }
+
+        float pow = Mathf.Pow(mazeRows, 1.15f);
+        int minStepCount = Mathf.RoundToInt(pow);
+        Debug.LogError("MIN STEP COUNT " + minStepCount);
+        if (stepCount < minStepCount)
+        {
+            AttemptCount++;
+            GenerateMaze(mazeRows, mazeColumns);
+        }
+        else
+        {
+            _signalBus.Fire<MazeGenerateFinished>();
+        }
+        // StartCoroutine(Process(obj.StepCount));
+    }
+
+    // public IEnumerator Test()
+    // {
+    //     Debug.LogError("0");
+    //     GenerateMaze(mazeRows, mazeColumns);
+    //     Debug.LogError("1");
+    //
+    //     for (int i = 0; i < 5; i++)
+    //     {
+    //         Debug.LogError("2");
+    //         yield return new WaitForSecondsRealtime(.5f);
+    //         Debug.LogError("3");
+    //         int stepCount = AStar();
+    //         yield return new WaitForSecondsRealtime(.5f);
+    //
+    //         Debug.LogError("4");
+    //
+    //         Debug.LogError("Attempt " + i + " stepCount " + stepCount);
+    //         if (stepCount == -1)
+    //         {
+    //             Debug.LogError("yapma bunu");
+    //         }
+    //
+    //         float pow = Mathf.Pow(mazeRows, 1.15f);
+    //         int minStepCount = Mathf.RoundToInt(pow);
+    //         Debug.LogError("MIN STEP COUNT " + minStepCount);
+    //         if (stepCount < minStepCount)
+    //         {
+    //             GenerateMaze(mazeRows, mazeColumns);
+    //         }
+    //         else
+    //         {
+    //             break;
+    //         }
+    //     }
+    //
+    //     _signalBus.Fire<MazeGenerateFinished>();
+    // }
 
     private void GenerateMaze(int rows, int columns)
     {
+        Debug.LogError("AttemptCount GenerateMaze " + AttemptCount);
         if (mazeParent != null) DeleteMaze();
 
         mazeRows = rows;
@@ -141,6 +208,7 @@ public class MazeGenerator : MonoBehaviour
         RunAlgorithm();
         MakeEnter();
         MakeExit();
+        AStar();
     }
 
     // This is where the fun stuff happens.
@@ -196,8 +264,9 @@ public class MazeGenerator : MonoBehaviour
 
         // Debug.Log("MakeExit 0");
         // Get edge cell randomly from list.
-        while (EndCell.gridPos.x == StartCell.gridPos.x || EndCell.gridPos.y == StartCell.gridPos.y)
+        if ((int) EndCell.gridPos.x == (int) StartCell.gridPos.x || (int) EndCell.gridPos.y == (int) StartCell.gridPos.y)
         {
+            edgeCells.Remove(EndCell);
             EndCell = edgeCells[Random.Range(0, edgeCells.Count)];
         }
 
@@ -294,27 +363,27 @@ public class MazeGenerator : MonoBehaviour
 
     public bool isWalkable(Cell firstCell, Cell secondCell)
     {
-        if (firstCell.gridPos.x == secondCell.gridPos.x)
+        if ((int) firstCell.gridPos.x == (int) secondCell.gridPos.x)
         {
-            if (firstCell.gridPos.y - secondCell.gridPos.y == 1 && !firstCell.cScript.wallD.IsActive)
+            if ((int) firstCell.gridPos.y - (int) secondCell.gridPos.y == 1 && !firstCell.cScript.wallD.IsActive)
             {
                 return true;
             }
 
-            if (secondCell.gridPos.y - firstCell.gridPos.y == 1 && !secondCell.cScript.wallD.IsActive)
+            if ((int) secondCell.gridPos.y - (int) firstCell.gridPos.y == 1 && !secondCell.cScript.wallD.IsActive)
             {
                 return true;
             }
         }
 
-        if (firstCell.gridPos.y == secondCell.gridPos.y)
+        if ((int) firstCell.gridPos.y == (int) secondCell.gridPos.y)
         {
-            if (firstCell.gridPos.x - secondCell.gridPos.x == 1 && !firstCell.cScript.wallL.IsActive)
+            if ((int) firstCell.gridPos.x - (int) secondCell.gridPos.x == 1 && !firstCell.cScript.wallL.IsActive)
             {
                 return true;
             }
 
-            if (secondCell.gridPos.x - firstCell.gridPos.x == 1 && !secondCell.cScript.wallL.IsActive)
+            if ((int) secondCell.gridPos.x - (int) firstCell.gridPos.x == 1 && !secondCell.cScript.wallL.IsActive)
             {
                 return true;
             }
@@ -323,7 +392,7 @@ public class MazeGenerator : MonoBehaviour
         return false;
     }
 
-    public int AStar()
+    public void AStar()
     {
         Cell startingCell = StartCell;
         Cell targetCell = EndCell;
@@ -380,10 +449,13 @@ public class MazeGenerator : MonoBehaviour
         {
             returnValue = RetracePath(StartCell, EndCell);
         }
-        
-        Debug.Log("AStar 1" + returnValue);
+        else
+        {
+            Debug.LogError("Not reached");
+        }
 
-        return returnValue;
+        OnAStartCompleted(returnValue);
+        // _signalBus.Fire(new AStartCompleted() {StepCount = returnValue});
     }
 
     int RetracePath(Cell startCell, Cell endCell)
@@ -402,12 +474,12 @@ public class MazeGenerator : MonoBehaviour
         path.Reverse();
         Debug.Log("RetracePath 2");
 
-        // foreach (Vector2 oppenheimer in path)
-        // {
-        //     Cell barbie = getCellByGridPos(oppenheimer);
-        //     barbie.cellObject.GetComponent<SpriteRenderer>().color = Color.red;
-        //     barbie.cellObject.GetComponent<SpriteRenderer>().enabled = true;
-        // }
+        foreach (Vector2 oppenheimer in path)
+        {
+            Cell barbie = getCellByGridPos(oppenheimer);
+            barbie.cellObject.GetComponent<SpriteRenderer>().color = Color.red;
+            barbie.cellObject.GetComponent<SpriteRenderer>().enabled = true;
+        }
 
         return path.Count;
     }

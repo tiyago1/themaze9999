@@ -24,7 +24,6 @@ namespace Maze
         {
             p1.Initialize();
             p2.Initialize();
-            _healthController.Initialize();
 
             CurrentCell = _maze.StartCell;
             this.transform.position = CurrentCell.cellObject.transform.position;
@@ -99,17 +98,19 @@ namespace Maze
             var cellSortingGroup = CurrentCell.cScript.GrayArea.GetComponent<SortingGroup>();
             if (CurrentCell.gridPos == _maze.StartCell.gridPos || CurrentCell.gridPos == _maze.EndCell.gridPos)
             {
-                cellSortingGroup.sortingLayerID = 1;
-                cellSortingGroup.sortingOrder = -10;
+                cellSortingGroup.sortingLayerName = "Player";
+                cellSortingGroup.sortingOrder = -1;
              
                 renderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
             }
             else
             {
+                cellSortingGroup.sortingLayerName = "Maze";
                 cellSortingGroup.sortingOrder = 5;
-                cellSortingGroup.sortingLayerID = 2;
                 renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
             }
+            
+            SortingGroup.UpdateAllSortingGroups();
 
             // this.transform.position = CurrentCell.cellObject.transform.position;
 
