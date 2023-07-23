@@ -18,6 +18,7 @@ using Maze;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Zenject;
 using Random = UnityEngine.Random;
 
@@ -82,6 +83,8 @@ public class MazeGenerator : MonoBehaviour
     public Cell EndCell;
 
     public int AttemptCount = 0;
+    public Color FillColor;
+    public Color EmptyColor;
 
     #endregion
 
@@ -105,6 +108,7 @@ public class MazeGenerator : MonoBehaviour
         Debug.LogError(AttemptCount + " OnAStartCompleted " + stepCount);
         if (AttemptCount >= 5)
         {
+            _signalBus.Fire<MazeGenerateFinished>();
             return;
         }
 
@@ -193,7 +197,7 @@ public class MazeGenerator : MonoBehaviour
             for (int y = 1; y <= mazeRows; y++)
             {
                 var cell = GenerateCell(spawnPos, new Vector2(x, y));
-                cell.cScript.GrayArea.gameObject.SetActive(isFill);
+                cell.cScript.GrayArea.color = isFill ? FillColor : EmptyColor;
                 // Increase spawnPos y.
                 spawnPos.y += cellSize;
                 isFill = !isFill;
@@ -280,6 +284,13 @@ public class MazeGenerator : MonoBehaviour
 
         EndCell.cScript.SetType(CellType.Empty);
         EndCell.cScript.SetLight(Color.green);
+        
+        var cellSortingGroup = StartCell.cScript.GrayArea.GetComponent<SortingGroup>();
+
+        cellSortingGroup.sortingLayerName = "Player";
+        cellSortingGroup.sortingOrder = 0;
+        SortingGroup.UpdateAllSortingGroups();
+        
         // EndCell.cScript.GrayArea.GetComponent<SpriteMask>().enabled = false;
 
         // Debug.Log("Maze generation exit finished." + EndCell.gridPos);
@@ -301,7 +312,13 @@ public class MazeGenerator : MonoBehaviour
         // Get edge cell randomly from list.
 
         StartCell = edgeCells[Random.Range(0, edgeCells.Count)];
-        StartCell.cScript.GrayArea.GetComponent<SpriteMask>().enabled = false;
+        // StartCell.cScript.GrayArea.GetComponent<SpriteMask>().true = false;
+
+        var cellSortingGroup = StartCell.cScript.GrayArea.GetComponent<SortingGroup>();
+
+        cellSortingGroup.sortingLayerName = "Player";
+        cellSortingGroup.sortingOrder = 0;
+        SortingGroup.UpdateAllSortingGroups();
 
         // Remove appropriate wall for chosen edge cell.
 
@@ -474,12 +491,12 @@ public class MazeGenerator : MonoBehaviour
         path.Reverse();
         Debug.Log("RetracePath 2");
 
-        foreach (Vector2 oppenheimer in path)
-        {
-            Cell barbie = getCellByGridPos(oppenheimer);
-            barbie.cellObject.GetComponent<SpriteRenderer>().color = Color.red;
-            barbie.cellObject.GetComponent<SpriteRenderer>().enabled = true;
-        }
+        // foreach (Vector2 oppenheimer in path)
+        // {
+        //     Cell barbie = getCellByGridPos(oppenheimer);
+        //     barbie.cellObject.GetComponent<SpriteRenderer>().color = Color.red;
+        //     barbie.cellObject.GetComponent<SpriteRenderer>().enabled = true;
+        // }
 
         return path.Count;
     }

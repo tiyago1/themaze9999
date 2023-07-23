@@ -32,7 +32,12 @@ namespace Maze
         public void Initialize()
         {
             _isInputBlocked = false;
-            _signalBus.Subscribe<GameOver>(() => { _isInputBlocked = true; });
+            _signalBus.Subscribe<GameOver>(() =>
+                {
+                    _isInputBlocked = true;
+                    TurnEnd();
+                }
+            );
         }
 
         public void SetTurn()

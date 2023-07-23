@@ -54,7 +54,7 @@ namespace Maze
             // _camera.transform.position = new Vector3(cameraX + 5, cameraY + 5, cameraZ);
             var defaultPosition = _camera.transform.position;
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(_camera.DOShakePosition(.2f, 0.2f, 1));
+            sequence.Append(_camera.DOShakePosition(.5f, 1f, 1));
             sequence.Append(_camera.transform.DOMove(defaultPosition, 0.3f));
             sequence.Play();
         }
@@ -99,14 +99,14 @@ namespace Maze
             if (CurrentCell.gridPos == _maze.StartCell.gridPos || CurrentCell.gridPos == _maze.EndCell.gridPos)
             {
                 cellSortingGroup.sortingLayerName = "Player";
-                cellSortingGroup.sortingOrder = -1;
+                cellSortingGroup.sortingOrder = 0;
              
-                renderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
             }
             else
             {
                 cellSortingGroup.sortingLayerName = "Maze";
-                cellSortingGroup.sortingOrder = 5;
+                cellSortingGroup.sortingOrder = 1;
                 renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
             }
             

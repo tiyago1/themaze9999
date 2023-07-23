@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using DG.Tweening;
 using Maze.UI;
+using TMPro;
 using UnityEngine;
 using Zenject;
 
 namespace Maze
 {
-    public class GameManager : MonoBehaviour,IInitializable
+    public class GameManager : MonoBehaviour, IInitializable
     {
+        [SerializeField] private TextMeshProUGUI mazeTimer;
+
         [Inject] private MazeGenerator _mazeGenerator;
         [Inject] private HealthController _healthController;
         [Inject] private PlayerController _playerController;
@@ -17,6 +20,7 @@ namespace Maze
         public bool IsInitialized;
         public bool IsGameOver;
 
+        private Coroutine _mazeCoroutine;
         public Camera camera;
 
         private void Awake()
@@ -55,7 +59,13 @@ namespace Maze
             IsGameOver = false;
             Debug.LogError("Init");
             _signalBus.Subscribe<MazeGenerateFinished>(OnMazeGenerateFinished);
-            // _mazeGenerator.Initialize();
+            _signalBus.Subscribe<GameOver>(StopTimer);
+        }
+
+        private void StopTimer()
+        {
+            mazeTimer.transform.DOKill();
+            StopCoroutine(_mazeCoroutine);
         }
 
         private void OnMazeGenerateFinished(MazeGenerateFinished obj)
@@ -63,14 +73,36 @@ namespace Maze
             SetUpCamera(_mazeGenerator.mazeRows);
             _healthController.Initialize();
             _playerController.Initialize();
+            StartMazeTimer();
         }
-        
+
         public void CheckGameEnd(MazeGenerator.Cell checkCell)
         {
             if (checkCell.gridPos == _mazeGenerator.EndCell.gridPos)
             {
+                mazeTimer.transform.DOKill();
+                StopCoroutine(_mazeCoroutine);
                 _gameResultPanel.Show(true);
             }
+        }
+
+        public void StartMazeTimer()
+        {
+            _mazeCoroutine = StartCoroutine(Timer());
+        }
+
+        private IEnumerator Timer()
+        {
+            int duration = _mazeGenerator.mazeRows * 6 + 10;
+            mazeTimer.text = duration.ToString();
+            for (int i = duration; i > 0; i--)
+            {
+                yield return new WaitForSecondsRealtime(1);
+
+                mazeTimer.transform.DOShakeRotation(.5f, 30, 10, 35).SetEase(Ease.Linear).OnStart(() => { mazeTimer.text = i.ToString(); });
+            }
+            
+            _gameResultPanel.Show(false);
         }
     }
 }

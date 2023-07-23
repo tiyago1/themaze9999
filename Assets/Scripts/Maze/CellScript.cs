@@ -16,7 +16,7 @@ public class CellScript : MonoBehaviour
     public Column wallR;
     public Column wallU;
     public Column wallD;
-    public Transform GrayArea;
+    public SpriteRenderer GrayArea;
     public Light2D light;
 
     public SpriteRenderer CellRenderer;
