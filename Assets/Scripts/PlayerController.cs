@@ -48,13 +48,9 @@ namespace Maze
 
         public void ShakeCamera()
         {
-            // float cameraX = _camera.transform.position.x;
-            // float cameraY = _camera.transform.position.y;
-            // float cameraZ = _camera.transform.position.z;
-            // _camera.transform.position = new Vector3(cameraX + 5, cameraY + 5, cameraZ);
             var defaultPosition = _camera.transform.position;
             Sequence sequence = DOTween.Sequence();
-            sequence.Append(_camera.DOShakePosition(.5f, 1f, 1));
+            sequence.Append(_camera.DOShakePosition(.2f, .5f, 1));
             sequence.Append(_camera.transform.DOMove(defaultPosition, 0.3f));
             sequence.Play();
         }
