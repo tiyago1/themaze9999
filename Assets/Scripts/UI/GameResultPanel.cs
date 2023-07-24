@@ -27,11 +27,5 @@ namespace Maze.UI
             
             _signalBus.Fire<GameOver>();
         }
-
-        public void Retry()
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-        
     }
 }

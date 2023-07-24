@@ -12,6 +12,8 @@ namespace Maze
     public class Player : MonoBehaviour
     {
         [Inject] private PlayerController _playerController;
+        [Inject] private HealthController _healthController;
+        [Inject] private GameManager _gameManager;
         [Inject] private GameResultPanel _gameResultPanel;
         [Inject] private SignalBus _signalBus;
 
@@ -26,8 +28,11 @@ namespace Maze
         public KeyCode Right;
         public Image timerImage;
         public Image arrowImage;
+        public Image backgroundImage;
+        public AudioClip move;
         private Tweener _timerTween;
         private bool _isInputBlocked;
+        public Transform KeyIndicator;
 
         public void Initialize()
         {
@@ -38,6 +43,12 @@ namespace Maze
                     TurnEnd();
                 }
             );
+            
+        }
+
+        public void SetColor(Color color)
+        {
+            backgroundImage.color = color;
         }
 
         public void SetTurn()
@@ -57,6 +68,7 @@ namespace Maze
 
             if (Input.GetKeyDown(Up))
             {
+                _gameManager.SoundManager.PlayEffect(move);
                 arrowImage.gameObject.SetActive(true);
                 arrowImage.sprite = ArrowSprites[0];
                 _playerController.MoveCell(new Vector2(0, 1));
@@ -64,6 +76,7 @@ namespace Maze
 
             if (Input.GetKeyDown(Left))
             {
+                _gameManager.SoundManager.PlayEffect(move);
                 arrowImage.gameObject.SetActive(true);
                 arrowImage.sprite = ArrowSprites[1];
                 _playerController.MoveCell(new Vector2(-1, 0));
@@ -71,6 +84,7 @@ namespace Maze
 
             if (Input.GetKeyDown(Down))
             {
+                _gameManager.SoundManager.PlayEffect(move);
                 arrowImage.gameObject.SetActive(true);
                 arrowImage.sprite = ArrowSprites[2];
                 _playerController.MoveCell(new Vector2(0, -1));
@@ -78,6 +92,7 @@ namespace Maze
 
             if (Input.GetKeyDown(Right))
             {
+                _gameManager.SoundManager.PlayEffect(move);
                 arrowImage.gameObject.SetActive(true);
                 arrowImage.sprite = ArrowSprites[3];
                 _playerController.MoveCell(new Vector2(1, 0));
@@ -106,7 +121,11 @@ namespace Maze
             {
                 _timerTween = DOVirtual.Float(0, 1, TimerDuration, (second) => { timerImage.fillAmount = second; })
                     .SetEase(Ease.Linear)
-                    .OnComplete(() => { _gameResultPanel.Show(false); });
+                    .OnComplete(() =>
+                    {
+                        _healthController.TakeDamage();
+                        _playerController.TurnChange();
+                    });
             }
         }
     }

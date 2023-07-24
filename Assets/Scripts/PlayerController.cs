@@ -10,13 +10,11 @@ namespace Maze
         [Inject] private MazeGenerator _maze;
         [Inject] private HealthController _healthController;
         [Inject] private GameManager _gameManager;
-
         [SerializeField] private Camera _camera;
 
         public MazeGenerator.Cell CurrentCell;
         public Player p1;
         public Player p2;
-
 
         private Player activeTurnPlayer;
 
@@ -28,9 +26,15 @@ namespace Maze
             CurrentCell = _maze.StartCell;
             this.transform.position = CurrentCell.cellObject.transform.position;
 
-            TurnChange();
+            // TurnChange();
         }
 
+        public void DisableAllIndicators()
+        { 
+            p1.KeyIndicator.gameObject.SetActive(false);
+            p2.KeyIndicator.gameObject.SetActive(false);
+        }
+        
         public void TurnChange()
         {
             if (activeTurnPlayer == null)
@@ -63,6 +67,7 @@ namespace Maze
                 var column = CurrentCell.cScript.GetColumnWithDirection(direction);
                 column.ShowWallInteractionEffect(direction, null);
                 _healthController.TakeDamage();
+                _gameManager.SoundManager.PlayHitWall();
                 ShakeCamera();
                 TurnChange();
                 return;
@@ -76,9 +81,9 @@ namespace Maze
                 var nextCellColumn = nextCell.cScript.GetColumnWithDirection(-direction);
                 nextCellColumn.SetActive(false);
                 currentColumn.ShowWallInteractionEffect(direction, () => { nextCellColumn.SetActive(true); });
-
-                _healthController.TakeDamage();
+                _gameManager.SoundManager.PlayHitWall();
                 ShakeCamera();
+                _healthController.TakeDamage();
                 TurnChange();
                 return;
             }
@@ -96,7 +101,7 @@ namespace Maze
             {
                 cellSortingGroup.sortingLayerName = "Player";
                 cellSortingGroup.sortingOrder = 0;
-             
+                
                 renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
             }
             else
@@ -104,6 +109,11 @@ namespace Maze
                 cellSortingGroup.sortingLayerName = "Maze";
                 cellSortingGroup.sortingOrder = 1;
                 renderer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+            }
+
+            if (CurrentCell.cScript.Potion.gameObject.activeSelf)
+            {
+                _healthController.GetHealth();
             }
             
             SortingGroup.UpdateAllSortingGroups();

@@ -11,19 +11,35 @@ namespace Maze
     {
         public List<Image> HearthsImages;
         public int MaxHealth;
-        public int Health;
+
+        public int Health
+        {
+            get { return PlayerPrefs.GetInt("Health", 3); }
+            set { PlayerPrefs.SetInt("Health", value); }
+        }
 
         [Inject] private GameResultPanel _gameResultPanel;
-        
+
         public void Initialize()
         {
-            Health = MaxHealth;
+            for (int i = 0; i < Health; i++)
+            {
+                var hearth = HearthsImages[i];
+
+                hearth.transform.DOScale(Vector3.one, 1);
+            }
         }
 
         public void TakeDamage()
         {
+            if (Health <= 0)
+            {
+                return;
+            }
+            
+            Debug.Log("TAKE DAMAGE " + Health);
+            var hearth = HearthsImages[Health - 1];
             Health--;
-            var hearth = HearthsImages[Health];
 
             hearth.transform.DOScale(Vector3.zero, 1);
 
@@ -31,6 +47,14 @@ namespace Maze
             {
                 _gameResultPanel.Show(false);
             }
+        }
+
+        public void GetHealth()
+        {
+            Health++;
+            var hearth = HearthsImages[Health - 1];
+
+            hearth.transform.DOScale(Vector3.one, 1);
         }
     }
 }

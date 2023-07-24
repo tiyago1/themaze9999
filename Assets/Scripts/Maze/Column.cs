@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Maze;
 using UnityEngine;
+using Zenject;
 
 public class Column : MonoBehaviour
 {
     public Vector2 Direction;
     public bool IsActive;
 
+    [Inject] private GameManager _gameManager;
+    
     public List<Color> Colors;
     public SpriteRenderer CellRenderer;
     private Color _activeColor;
@@ -17,7 +21,6 @@ public class Column : MonoBehaviour
 
     private void Awake()
     {
-        SetActive(true);
         _defaultPosition = this.transform.localPosition;
         _defaultScale = this.transform.localScale;
     }
@@ -32,6 +35,13 @@ public class Column : MonoBehaviour
         // this.gameObject.SetActive(IsActive);
     }
 
+    public void SetWallColor(Color color)
+    {
+        Colors[(int) CellType.Empty] = color;
+
+        SetActive(true);
+    }
+
     public void ShowWallInteractionEffect(Vector3 direction, Action onComplete)
     {
         CellRenderer.color = _activeColor;
@@ -42,6 +52,7 @@ public class Column : MonoBehaviour
         {
             _sequence.Kill();
         }
+        // _gameManager.SoundManager.PlayHitWall();
 
         _sequence = DOTween.Sequence();
         _sequence.Join(CellRenderer.transform.DOLocalMove(_defaultPosition + (direction * 0.3f), 0.3f).SetEase(Ease.InOutBack));

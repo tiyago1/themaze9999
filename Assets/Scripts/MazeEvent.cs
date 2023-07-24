@@ -15,8 +15,8 @@
         
     }
 
-    // public struct AStartCompleted
-    // {
-    //     public int StepCount;
-    // }
+    public struct AStartCompleted
+    {
+        public int StepCount;
+    }
 }

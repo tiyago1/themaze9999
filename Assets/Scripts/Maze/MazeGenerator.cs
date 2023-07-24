@@ -42,6 +42,7 @@ public class MazeGenerator : MonoBehaviour
     [Tooltip("If you want to disable the main sprite so the cell has no background, set to TRUE. This will create a maze with only walls.")]
     public bool disableCellSprite;
 
+
     // ------------------------------------------------------
     // System defined variables - You don't need to touch these:
     // ------------------------------------------------------
@@ -77,6 +78,7 @@ public class MazeGenerator : MonoBehaviour
     private GameObject mazeParent;
 
     [Inject] private PlayerController _playerController;
+    [Inject] private HealthController _healthController;
     [Inject] private SignalBus _signalBus;
 
     public Cell StartCell;
@@ -85,6 +87,7 @@ public class MazeGenerator : MonoBehaviour
     public int AttemptCount = 0;
     public Color FillColor;
     public Color EmptyColor;
+    public Color MazeBorderColor;
 
     #endregion
 
@@ -95,12 +98,23 @@ public class MazeGenerator : MonoBehaviour
      * do the rest for you. Enjoy!
      */
 
-    public void Initialize()
+    public void Initialize(Color mazeColor, int mazeSize)
     {
         Debug.LogError("MazeGenerator Initialize()");
+        MazeBorderColor = mazeColor;
         AttemptCount = 0;
-        GenerateMaze(mazeRows, mazeColumns);
-        // _signalBus.Subscribe<AStartCompleted>(OnAStartCompleted);
+        GenerateMaze(mazeSize, mazeSize);
+         // _signalBus.Subscribe<AStartCompleted>(OnAStartCompleted);
+    }
+
+    public void GenerateHealthPotion()
+    {
+        var allCellCopy = allCells;
+        allCellCopy.Remove(StartCell.gridPos);
+        allCellCopy.Remove(EndCell.gridPos);
+        int randomIndex = Random.Range(0, allCellCopy.Count);
+        var X = allCellCopy.ElementAt(randomIndex);
+        X.Value.cScript.ActivatePotion();
     }
 
     private void OnAStartCompleted(int stepCount)
@@ -213,6 +227,11 @@ public class MazeGenerator : MonoBehaviour
         MakeEnter();
         MakeExit();
         AStar();
+
+        // if (_healthController.Health != 3)
+        // {
+        //     GenerateHealthPotion();
+        // }
     }
 
     // This is where the fun stuff happens.
@@ -284,13 +303,13 @@ public class MazeGenerator : MonoBehaviour
 
         EndCell.cScript.SetType(CellType.Empty);
         EndCell.cScript.SetLight(Color.green);
-        
+
         var cellSortingGroup = StartCell.cScript.GrayArea.GetComponent<SortingGroup>();
 
         cellSortingGroup.sortingLayerName = "Player";
         cellSortingGroup.sortingOrder = 0;
         SortingGroup.UpdateAllSortingGroups();
-        
+
         // EndCell.cScript.GrayArea.GetComponent<SpriteMask>().enabled = false;
 
         // Debug.Log("Maze generation exit finished." + EndCell.gridPos);
@@ -635,6 +654,7 @@ public class MazeGenerator : MonoBehaviour
         newCell.cellObject.name = "Cell - X:" + keyPos.x + " Y:" + keyPos.y;
         // Get reference to attached CellScript.
         newCell.cScript = newCell.cellObject.GetComponent<CellScript>();
+        newCell.cScript.SetWallColor(MazeBorderColor);
         newCell.cScript.SetType(CellType.Fog);
         // Disable Cell sprite, if applicable.
         if (disableCellSprite) newCell.cellObject.GetComponent<SpriteRenderer>().enabled = false;

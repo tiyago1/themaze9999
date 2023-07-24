@@ -18,6 +18,7 @@ public class CellScript : MonoBehaviour
     public Column wallD;
     public SpriteRenderer GrayArea;
     public Light2D light;
+    public GameObject Potion;
 
     public SpriteRenderer CellRenderer;
     public List<Color> Colors;
@@ -36,6 +37,19 @@ public class CellScript : MonoBehaviour
     {
         light.gameObject.SetActive(true);
         light.color = color;
+    }
+
+    public void SetWallColor(Color mazeBorderColor)
+    {
+        wallL.SetWallColor(mazeBorderColor);
+        wallR.SetWallColor(mazeBorderColor);
+        wallU.SetWallColor(mazeBorderColor);
+        wallD.SetWallColor(mazeBorderColor);
+    }
+
+    public void ActivatePotion()
+    {
+        Potion.gameObject.SetActive(true);
     }
 }
 
